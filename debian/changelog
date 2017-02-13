@@ -1,0 +1,667 @@
+ubuntu-core-config (0.6.40+ppa42) xenial; urgency=medium
+
+  * /usr/bin/mkswapfile: add some suggestions from Micheal Vogt, dont try to
+    call swapon if we are already using the file.
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Fri, 10 Feb 2017 18:11:08 +0100
+
+ubuntu-core-config (0.6.40+ppa41) xenial; urgency=medium
+
+  * add /etc/default/swapfile, /etc/systemd/system/swapfile.service and
+    /usr/bin/mkswapfile to be managed by the core configure hook.
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Fri, 10 Feb 2017 14:02:20 +0100
+
+ubuntu-core-config (0.6.40+ppa40) xenial; urgency=medium
+
+  * add /etc/systemd/timesyncd.conf to writable paths
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Tue, 07 Feb 2017 18:07:37 +0100
+
+ubuntu-core-config (0.6.40+ppa39) xenial; urgency=medium
+
+  * fix typo, rsyslog.d not rsyslogd.d
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Thu, 02 Feb 2017 14:11:05 +0100
+
+ubuntu-core-config (0.6.40+ppa38) xenial; urgency=medium
+
+  * add /etc/rsyslog.d to the writable paths
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Wed, 01 Feb 2017 17:12:20 +0100
+
+ubuntu-core-config (0.6.40+ppa37) xenial; urgency=medium
+
+  * add /etc/inti.d to the writable paths
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Fri, 27 Jan 2017 15:42:31 +0100
+
+ubuntu-core-config (0.6.40+ppa36) xenial; urgency=medium
+
+  * add all /etc/rc*.d directories to writable paths to quieten systemctl
+    disable/enable (we dont use these dirs anyway but they cause warnings)
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Fri, 27 Jan 2017 14:21:30 +0100
+
+ubuntu-core-config (0.6.40+ppa35) xenial; urgency=medium
+
+  * make /etc/init writable so systemctl disable works for packages that also
+    ship upstart jobs (like sshd)
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Fri, 27 Jan 2017 12:38:54 +0100
+
+ubuntu-core-config (0.6.40+ppa34) xenial; urgency=medium
+
+  * make /etc/iproute2 writable (LP: #1658298)
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Sun, 22 Jan 2017 16:51:41 +0100
+
+ubuntu-core-config (0.6.40+ppa33) xenial; urgency=medium
+
+  * add /etc/systemd/logind.conf.d to writable-paths
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Fri, 06 Jan 2017 16:37:58 +0100
+
+ubuntu-core-config (0.6.40+ppa32) xenial; urgency=medium
+
+  * drop snappy-oem-branding.sh profile snippet, not used anymore
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Thu, 05 Jan 2017 11:24:10 +0100
+
+ubuntu-core-config (0.6.40+ppa31) xenial; urgency=medium
+
+  * switch /etc/modprobe.d to synced
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Fri, 02 Dec 2016 15:32:17 +0100
+
+ubuntu-core-config (0.6.40+ppa30) xenial; urgency=medium
+
+  * drop /etc/ufw from the writable paths (LP: #1635264)
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 30 Nov 2016 09:16:59 +0100
+
+ubuntu-core-config (0.6.40+ppa29) xenial; urgency=medium
+
+  * fix modprobe.d
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 02 Nov 2016 13:12:01 +0200
+
+ubuntu-core-config (0.6.40+ppa28) xenial; urgency=medium
+
+  * Revert back to static netplan config that uses the "*" match.
+    This will not work when the network-manager backend is used,
+    but this a custom config needs to be deployed.
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 27 Oct 2016 12:56:09 +0200
+
+ubuntu-core-config (0.6.40+ppa27) xenial; urgency=medium
+
+  * add /media as temporary mount
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 26 Oct 2016 16:24:51 +0200
+
+ubuntu-core-config (0.6.40+ppa26) xenial; urgency=medium
+
+  * revert automatic first user creation
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 26 Oct 2016 15:32:36 +0200
+
+ubuntu-core-config (0.6.40+ppa25) xenial; urgency=medium
+
+  * really create the system-user as sudo
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 26 Oct 2016 12:37:30 +0200
+
+ubuntu-core-config (0.6.40+ppa24) xenial; urgency=medium
+
+  * the first user is sudo
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 26 Oct 2016 11:55:54 +0200
+
+ubuntu-core-config (0.6.40+ppa23) xenial; urgency=medium
+
+  * also handle the case when we have no changes at all yet
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 26 Oct 2016 11:51:33 +0200
+
+ubuntu-core-config (0.6.40+ppa22) xenial; urgency=medium
+
+  * make generate-known-users wait more reliable
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 26 Oct 2016 11:45:10 +0200
+
+ubuntu-core-config (0.6.40+ppa21) xenial; urgency=medium
+
+  * add the missing links
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 26 Oct 2016 10:52:16 +0200
+
+ubuntu-core-config (0.6.40+ppa20) xenial; urgency=medium
+
+  * add helper that generates the known users
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 26 Oct 2016 10:18:19 +0200
+
+ubuntu-core-config (0.6.40+ppa19) xenial; urgency=medium
+
+  * add some missing sync calls
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Sat, 22 Oct 2016 12:41:27 +0200
+
+ubuntu-core-config (0.6.40+ppa18) xenial; urgency=medium
+
+  * fix netplan networkd config
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 20 Oct 2016 15:44:08 +0200
+
+ubuntu-core-config (0.6.40+ppa17) xenial; urgency=medium
+
+  * debian/links:
+    lib/systemd/system/snapd.generate-network-conf.service:
+    usr/lib/snapd/generate-network-conf:
+    - Dynamically create netplan configuration file on firstboot
+      depending on available network interfaces.
+
+ -- Simon Fels <simon.fels@canonical.com>  Thu, 20 Oct 2016 00:08:12 +0200
+
+ubuntu-core-config (0.6.40+ppa16) xenial; urgency=medium
+
+  * revert 'use "synced" for /etc/cloud'
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 18 Oct 2016 17:24:03 +0200
+
+ubuntu-core-config (0.6.40+ppa15) xenial; urgency=medium
+
+  * use "synced" for /etc/cloud
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Mon, 17 Oct 2016 15:21:54 +0200
+
+ubuntu-core-config (0.6.40+ppa14) xenial; urgency=medium
+
+  * drop etc/systemd/system/getty@tty1.service.d/show-ip.conf:
+    - replace with \4 in /etc/issue via livecd-rootfs
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Mon, 10 Oct 2016 09:56:05 +0200
+
+ubuntu-core-config (0.6.40+ppa13) xenial; urgency=medium
+
+  * add /etc/cloud/ directory to the writable paths
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 05 Oct 2016 17:49:12 +0200
+
+ubuntu-core-config (0.6.40+ppa12) xenial; urgency=medium
+
+  * ensure the /var/lib/cloud directory is available
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 05 Oct 2016 08:42:09 +0200
+
+ubuntu-core-config (0.6.40+ppa11) xenial; urgency=medium
+
+  * etc/netplan/00-snapd-config.yaml:
+    - add default network config
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Fri, 30 Sep 2016 19:26:34 +0200
+
+ubuntu-core-config (0.6.40+ppa10) xenial; urgency=medium
+
+  * etc/systemd/system/getty@tty1.service.d/show-ip.conf:
+    - fix silly typo
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Fri, 23 Sep 2016 23:22:30 +0200
+
+ubuntu-core-config (0.6.40+ppa9) xenial; urgency=medium
+
+  * etc/systemd/system/getty@tty1.service.d/show-ip.conf:
+    - show ifconfig output on tty1 before the getty
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Fri, 23 Sep 2016 21:07:48 +0200
+
+ubuntu-core-config (0.6.40+ppa8) xenial; urgency=medium
+
+  * add /etc/default/keyboard to writable path
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 21 Sep 2016 16:52:45 +0200
+
+ubuntu-core-config (0.6.40+ppa7) xenial; urgency=medium
+
+  * add "snapd.sshd-keygen.service" to generate ssh host keys
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 06 Sep 2016 08:08:43 +0200
+
+ubuntu-core-config (0.6.40+ppa6) xenial; urgency=medium
+
+  * add /etc/systemd/user.conf.d and /etc/systemd/system.conf.d to
+    writable paths
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Thu, 25 Aug 2016 02:33:05 +0200
+
+ubuntu-core-config (0.6.40+ppa5) xenial; urgency=medium
+
+  * add dirs for netplan support
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Wed, 10 Aug 2016 13:06:26 +0200
+
+ubuntu-core-config (0.6.40+ppa4) xenial; urgency=medium
+
+  * drop stale apparmor-workarounds unit
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 18 May 2016 16:49:53 +0200
+
+ubuntu-core-config (0.6.40+ppa3) xenial; urgency=medium
+
+  * add XB-Task: ubuntu-core to control file
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Fri, 29 Apr 2016 17:59:34 +0200
+
+ubuntu-core-config (0.6.40+ppa2) xenial; urgency=medium
+
+  * fix FTBFS
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 27 Apr 2016 11:53:31 +0200
+
+ubuntu-core-config (0.6.40+ppa1) xenial; urgency=medium
+
+  * fix debian/copyright to be more accurate
+  * drop etc/system-image/config.d/20_snappy.ini
+  * drop /apps, /snaps, /var/lib/snaps dirs
+  * drop usr/bin/snappy-apparmor-lp1460152
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 21 Apr 2016 10:32:47 +0200
+
+ubuntu-core-config (0.6.40) xenial; urgency=medium
+
+  * update writable paths for the /snaps -> /snap directory update
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 12 Apr 2016 01:12:58 +0200
+
+ubuntu-core-config (0.6.39) xenial; urgency=medium
+
+  * add /etc/systemd/network to writable paths to allow cloud-init to store
+    device names (LP: #1562784).
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Tue, 29 Mar 2016 13:24:42 +0200
+
+ubuntu-core-config (0.6.38) xenial; urgency=medium
+
+  * add /var/lib/systemd/rfkill to writable-paths to make sure systemd can
+    store and restore the rfkill states.
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Mon, 29 Feb 2016 14:40:27 +0100
+
+ubuntu-core-config (0.6.37) xenial; urgency=medium
+
+  * etc/profile.d/snappy-oem-branding.sh:
+    - update for the new location of the gadget snap
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Mon, 29 Feb 2016 14:34:54 +0100
+
+ubuntu-core-config (0.6.36) xenial; urgency=medium
+
+  * remove etc/profile.d/snappy-bin-path.sh, this is part
+    of ubuntu-snappy-cli now
+  * cleanup /etc/system-image/writable-paths and remove
+    - /{apps,os,oem,kernel,gadget}
+    - /var/lib/apps
+    - /custom/etc/dconf
+    - /var/lib/systemd/click, /var/lib/systemd/snappy
+    - /usr/share/click/frameworks, /var/lib/click/frameworks
+    - /var/lib/click/bin
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 19 Jan 2016 15:43:23 +0100
+
+ubuntu-core-config (0.6.35) xenial; urgency=medium
+
+  * ensure /snaps, /var/lib/snaps dirs are created
+  * remove creation of /os and /kernel
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Sat, 09 Jan 2016 10:26:08 +0100
+
+ubuntu-core-config (0.6.34) xenial; urgency=medium
+
+  * add /var/lib/snaps
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Sat, 09 Jan 2016 10:22:44 +0100
+
+ubuntu-core-config (0.6.33) xenial; urgency=medium
+
+  * add /snaps
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Fri, 08 Jan 2016 21:16:30 +0100
+
+ubuntu-core-config (0.6.32) xenial; urgency=medium
+
+  * add /gadget
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 17 Dec 2015 10:43:06 +0100
+
+ubuntu-core-config (0.6.31) xenial; urgency=medium
+
+  * drop /etc/watchdog.conf and /etc/default/watchdog from writable-paths,
+    they are now links into /etc/writable instead
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Thu, 22 Oct 2015 18:13:49 +0200
+
+ubuntu-core-config (0.6.30) wily; urgency=medium
+
+  * add /etc/modules-load.d to writable dirs (LP: #1496419) 
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Tue, 20 Oct 2015 13:47:06 +0200
+
+ubuntu-core-config (0.6.29) wily; urgency=medium
+
+  * fix /etc/NetworkManager/connections entry in
+    /etc/system-image/writable-paths (unwanted line wrap)
+  * add /var/lib/opencryptok to writable-paths to make sure pkcsslotd can
+    start properly (LP: #1500020)
+  * add /etc/ppp, /etc/watchdog.conf, /etc/default/watchdog and /var/lib/tpm
+    to writable-paths for seeding tpm-tools and ppp (to get in sync with
+    stable)
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Wed, 30 Sep 2015 11:37:14 +0200
+
+ubuntu-core-config (0.6.28) wily; urgency=medium
+
+  * add /os, /kernel to the writable-paths
+  * add /etc/modprobe.d/ to writable paths
+  * remove /opt/click.ubuntu.com
+  * create /apps, /kernel, /os top level dirs from this package
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 08 Sep 2015 09:07:59 +0200
+
+ubuntu-core-config (0.6.27) wily; urgency=medium
+
+  * Add /var/lib/waagent for Azure (LP: #1472422)
+
+ -- Ricardo Salveti de Araujo <ricardo.salveti@canonical.com>  Wed, 08 Jul 2015 15:44:50 -0300
+
+ubuntu-core-config (0.6.26) wily; urgency=medium
+
+  * writable-paths: use correct temporary mount syntax, 
+    bugfix from the previous directories change
+
+ -- Sebastien Bacher <seb128@ubuntu.com>  Fri, 03 Jul 2015 16:42:15 +0200
+
+ubuntu-core-config (0.6.25) wily; urgency=medium
+
+  * Adding azure cloud datasource (deprecates need for walinuxagent).
+
+ -- Sergio Schvezov <sergio.schvezov@canonical.com>  Wed, 01 Jul 2015 12:35:15 -0300
+
+ubuntu-core-config (0.6.24) wily; urgency=medium
+
+  * List some extra directories (accountsservice, bluetooth, nm, usermetrics,
+    whoopsie,...) writable (inspired from ubuntu-touch, needed for 
+    ubuntu-desktop-next)
+
+ -- Sebastien Bacher <seb128@ubuntu.com>  Tue, 30 Jun 2015 16:59:57 +0200
+
+ubuntu-core-config (0.6.23) wily; urgency=medium
+
+  * Set the colord directory as writable
+
+ -- Sebastien Bacher <seb128@ubuntu.com>  Fri, 19 Jun 2015 17:28:16 +0200
+
+ubuntu-core-config (0.6.22) wily; urgency=medium
+
+  * Set lightdm and lightdm-data directories as writable
+
+ -- Sebastien Bacher <seb128@ubuntu.com>  Fri, 19 Jun 2015 10:58:06 +0200
+
+ubuntu-core-config (0.6.21) wily; urgency=low
+
+  * add pre-created /var/lib/systemd/random-seed (LP: #1462954)
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 10 Jun 2015 11:17:55 +0200
+
+ubuntu-core-config (0.6.20) wily; urgency=medium
+
+  * Adding system image grub configuration (LP: #1462501)
+
+ -- Sergio Schvezov <sergio.schvezov@canonical.com>  Mon, 08 Jun 2015 10:02:04 -0300
+
+ubuntu-core-config (0.6.19) wily; urgency=low
+
+  * lib/systemd/system/snappy-workaround-apparmor.service:
+    - use correct "WantedBy" location
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Mon, 08 Jun 2015 15:25:13 +0200
+
+ubuntu-core-config (0.6.18) wily; urgency=low
+
+  * revert 'use "transition" for /etc/apparmor.d/cache' change
+    as we can not pre-create the apparmor cache on livecd-rootfs build
+  * usr/bin/snappy-apparmor-lp1460152,
+    lib/systemd/system/snappy-workaround-apparmor.service:
+    - add workaround for apparmor cache out of sync issue (LP: #1460152)
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 04 Jun 2015 22:56:29 +0200
+
+ubuntu-core-config (0.6.17) wily; urgency=low
+
+  * use "transition" for /etc/apparmor.d/cache
+    (LP: #1460152)
+  * etc/system-image/config.d/20_snappy.ini:
+    - fix config file name
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 03 Jun 2015 09:43:09 +0200
+
+ubuntu-core-config (0.6.16) wily; urgency=medium
+
+  * Add /frameworks to writable-paths
+
+ -- Sergio Schvezov <sergio.schvezov@canonical.com>  Tue, 26 May 2015 15:33:09 -0300
+
+ubuntu-core-config (0.6.15) vivid; urgency=low
+
+  * use "transition" in /var/lib/apps
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 23 Apr 2015 13:35:25 +0200
+
+ubuntu-core-config (0.6.14) vivid; urgency=medium
+
+  * add /etc/dbus-1/system.d to writable paths for DBus bus policy of
+    framework services
+
+ -- Jamie Strandboge <jamie@ubuntu.com>  Sun, 19 Apr 2015 07:53:15 -0500
+
+ubuntu-core-config (0.6.13) vivid; urgency=medium
+
+  * add /etc/sudoers.d/10-ubuntu-core-secure-path to override secure_path to
+    include /apps/bin on snappy only (LP: #1411671)
+
+ -- Jamie Strandboge <jamie@ubuntu.com>  Fri, 17 Apr 2015 13:50:50 -0500
+
+ubuntu-core-config (0.6.12) vivid; urgency=low
+
+  * make /var/lib/systemd/random-seed writable
+  * add /var/lib/systemd/coredump
+  * add /var/lib/machines/
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 16 Apr 2015 17:17:24 -0500
+
+ubuntu-core-config (0.6.11) vivid; urgency=low
+
+  * /etc/system-image/writable-paths:
+    - add /etc/udev/rules.d
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 15 Apr 2015 10:05:34 -0500
+
+ubuntu-core-config (0.6.10) vivid; urgency=medium
+
+  * Update /etc/system-image/writable-paths to include /var/lib/snappy for
+    security policies, etc
+
+ -- Jamie Strandboge <jamie@ubuntu.com>  Thu, 02 Apr 2015 13:49:48 -0500
+
+ubuntu-core-config (0.6.9) vivid; urgency=medium
+
+  * Ensure the chosen hostname is applied, not the default (LP: #1418966).
+
+ -- James Hunt <james.hunt@ubuntu.com>  Tue, 31 Mar 2015 14:12:14 +0100
+
+ubuntu-core-config (0.6.8) vivid; urgency=low
+
+  [ James Hunt ]
+  * Add /etc/network/interfaces.d to writable paths (LP: #1405795).
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 31 Mar 2015 14:11:59 +0200
+
+ubuntu-core-config (0.6.7) vivid; urgency=medium
+
+  * etc/cloud/cloud.cfg.d/10_snappy.cfg: disable apt_configure.
+    That was incorrectly enabled previously.
+
+ -- Scott Moser <smoser@ubuntu.com>  Thu, 26 Mar 2015 23:05:37 -0400
+
+ubuntu-core-config (0.6.6) vivid; urgency=low
+
+  * add missing etc/profile.d/snappy-bin-path.sh
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 26 Mar 2015 09:50:05 +0100
+
+ubuntu-core-config (0.6.5) vivid; urgency=low
+
+  * etc/system-image/config.d/20_snappy.conf
+    - fix config location for s-i 3.0
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Fri, 13 Mar 2015 09:15:20 +0100
+
+ubuntu-core-config (0.6.4) vivid; urgency=medium
+
+  * etc/cloud/cloud.cfg.d/10_snappy.cfg: add snappy cloud-init config 
+
+ -- Scott Moser <smoser@ubuntu.com>  Wed, 04 Mar 2015 17:07:03 -0500
+
+ubuntu-core-config (0.6.3) vivid; urgency=low
+
+  [ Michael Vogt ]
+  * ensure /boot/efi is available
+  * add oem specific PS1 prompt customization
+  * "port" touch-extrausers pam config to get a working passwd
+    command on snappy
+  * etc/system-image/writable-paths:
+    - add /var/lib/click/bin
+    - add /oem to writable paths
+    - add /var/lib/extrausers
+
+  [ Sergio Schvezov ]
+  * Fixing PS1 oem customization hook. 
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Mon, 23 Feb 2015 08:40:20 +0100
+
+ubuntu-core-config (0.6.2) vivid; urgency=low
+
+  * add /etc/sysctl.d
+  * upload PPA version into vivid
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 11 Dec 2014 15:17:14 +0100
+
+ubuntu-core-config (0.6.1+ppa8) vivid; urgency=medium
+
+  * etc/system-image/writable-paths: Reference writable-paths(5).
+
+ -- James Hunt <james.hunt@ubuntu.com>  Fri, 05 Dec 2014 08:59:52 +0000
+
+ubuntu-core-config (0.6.1+ppa7) vivid; urgency=medium
+
+  * Revert previous change.  We do need to mount /etc/systemd/system from
+    the initramfs as explained, but we also need writable_paths handling
+    so that we migrate the stock contents of the directory to the writable
+    location before over-mounting it.
+
+ -- Steve Langasek <steve.langasek@ubuntu.com>  Thu, 04 Dec 2014 16:03:02 -0800
+
+ubuntu-core-config (0.6.1+ppa6) vivid; urgency=medium
+
+  * writable-paths: Drop /etc/systemd/system. We now do that in the initramfs
+    in initramfs-tools-ubuntu-core, as mounting it in the running system is
+    too late: At that time systemd has already started and read all the units,
+    so it won't see any new ones in /writable.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 04 Dec 2014 14:38:56 +0100
+
+ubuntu-core-config (0.6.1+ppa5) vivid; urgency=low
+
+  * add /var/lib/apps to writable area
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 03 Dec 2014 20:47:37 +0100
+
+ubuntu-core-config (0.6.1+ppa4) vivid; urgency=medium
+
+  * blacklist floppy.ko which generates a lot of noise and really
+    is not needed.
+
+ -- James Hunt <james.hunt@ubuntu.com>  Tue, 02 Dec 2014 14:24:59 +0000
+
+ubuntu-core-config (0.6.1+ppa3) vivid; urgency=low
+
+  * remove /etc/hostname - its already a symlink to /etc/writable
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 02 Dec 2014 10:47:46 +0100
+
+ubuntu-core-config (0.6.1+ppa2) vivid; urgency=low
+
+  * add /var/lib/systemd/snappy
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Mon, 01 Dec 2014 16:43:11 +0100
+
+ubuntu-core-config (0.6.1+ppa1) vivid; urgency=low
+
+  * add /apps to the writable path
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 27 Nov 2014 14:11:48 +0100
+
+ubuntu-core-config (0.6.1) vivid; urgency=low
+
+  * etc/system-image/writable-paths:
+    - add /etc/sudoers.d, /root, /etc/hostname, /etc/hosts
+      Thanks to Scott Moser
+    - add /var/lib/click/frameworks (for click-hook-framework)
+    - make /mnt writable
+    - add /var/lib/waagent (for the device-azure target)
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Mon, 24 Nov 2014 15:02:54 +0100
+
+ubuntu-core-config (0.6) vivid; urgency=low
+
+  * replace /etc/apparmor.d/ with /var/lib/apparmor/profiles/
+  * add /usr/share/click/frameworks for click-hook-framework
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Mon, 17 Nov 2014 11:29:07 +0100
+
+ubuntu-core-config (0.5) vivid; urgency=low
+
+  * add /etc/apparmor.d/ to writable paths
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 13 Nov 2014 11:48:23 +0100
+
+ubuntu-core-config (0.4) vivid; urgency=medium
+
+  [ James Hunt ]
+  * etc/system-image/writable-paths: Remove /boot - unlike Touch, this needs
+    to be on the root partition _only_.
+  * Added COPYING file.
+  
+  [ Michael Vogt ]
+  * etc/system-image/writable-paths:
+    - add /var/lib/systemd/click, /etc/systemd/system for click-systemd
+
+ -- James Hunt <james.hunt@ubuntu.com>  Fri, 10 Oct 2014 09:17:28 +0100
+
+ubuntu-core-config (0.3) utopic; urgency=medium
+
+  * etc/system-image/writable-paths: Removed unused directories.
+
+ -- James Hunt <james.hunt@ubuntu.com>  Wed, 08 Oct 2014 09:53:25 +0100
+
+ubuntu-core-config (0.2) utopic; urgency=medium
+
+  * debian/control: Remove bogus dependency on self (LP: #1376103).
+
+ -- James Hunt <james.hunt@ubuntu.com>  Wed, 01 Oct 2014 08:50:23 +0100
+
+ubuntu-core-config (0.1) utopic; urgency=low
+
+  * Initial release. (LP: #1374446)
+
+ -- James Hunt <james.hunt@ubuntu.com>  Wed, 24 Sep 2014 16:07:36 +0100

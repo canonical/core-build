@@ -1,0 +1,7 @@
+[Unit]
+Description=Generate default network config
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/lib/snapd/generate-network-conf

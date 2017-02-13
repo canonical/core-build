@@ -1,0 +1,13 @@
+#!/bin/sh -e
+
+pam-auth-update --package snappy-extrausers
+
+mkdir -p  /var/lib/machines/
+chmod 700 /var/lib/machines/
+
+# Make sure /var/lib/waagent is available for Azure
+# https://bugs.launchpad.net/snappy/+bug/1472422
+mkdir -p  /var/lib/waagent/
+chmod 700 /var/lib/waagent/
+
+#DEBHELPER#

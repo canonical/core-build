@@ -1,0 +1,6 @@
+boot/efi
+var/lib/systemd/coredump
+etc/sudoers.d
+var/lib/cloud
+
+

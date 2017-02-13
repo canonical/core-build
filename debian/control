@@ -1,0 +1,15 @@
+Source: ubuntu-core-config
+Section: utils
+Priority: optional
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Build-Depends: debhelper (>= 9), dh-systemd
+Standards-Version: 3.9.5
+
+Package: ubuntu-core-config
+Architecture: all
+Depends: ${misc:Depends}, libpam-runtime (>= 1.0.1-6)
+Description: Configuration for Ubuntu Core images
+ This package contains the configuration file to make a read-only
+ Ubuntu Core image selectively writeable. You should not need to
+ install this package manually.
+XB-Task: ubuntu-core

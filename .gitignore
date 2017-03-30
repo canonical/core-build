@@ -1,0 +1,10 @@
+config/debian/debhelper-build-stamp
+config/debian/files
+config/debian/ubuntu-core-config.debhelper.log
+config/debian/ubuntu-core-config.substvars
+config/debian/ubuntu-core-config/
+ubuntu-core-config_*.dsc
+ubuntu-core-config_*.tar.xz
+ubuntu-core-config_*.deb
+ubuntu-core-config_*.changes
+

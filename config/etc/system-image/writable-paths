@@ -20,7 +20,6 @@
 /var/lib/bluetooth                      auto                    persistent  none        none
 # cloud-init
 /etc/cloud                              auto                    synced  none        none
-/etc/cloud/cloud.cfg.d                  auto                    synced  none        none
 /var/lib/cloud                          auto                    persistent  none        none
 /var/lib/colord                         auto                    persistent  transition  none
 /var/lib/dbus                           auto                    persistent  none        none

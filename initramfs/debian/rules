@@ -1,0 +1,11 @@
+#!/usr/bin/make -f
+
+%:
+	dh $@ 
+
+override_dh_auto_test:
+	@set -e; for f in scripts/*; do \
+	    echo "Checking shell syntax of $$f"; \
+	    sh -n $$f; \
+	done
+

@@ -1,0 +1,4 @@
+conf/*				usr/share/initramfs-tools/conf.d
+scripts/*			usr/share/initramfs-tools/scripts
+hooks/*				usr/share/initramfs-tools/hooks
+modules/*			usr/lib/initramfs-tools-ubuntu-core

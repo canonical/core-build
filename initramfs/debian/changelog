@@ -1,0 +1,517 @@
+initramfs-tools-ubuntu-core (0.7.43+ppa20) xenial; urgency=medium
+
+  * drop old modules/firmware mounting code as it causes the kernel snap to be
+    mounted twice where it should not.
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Fri, 13 Jan 2017 14:56:10 +0100
+
+initramfs-tools-ubuntu-core (0.7.43+ppa19) xenial; urgency=medium
+
+  * make modules files arch specific, copy arch specific modules file
+    from /usr/lib/initramfs-tools-ubuntu-core/ with a postinst snippet.
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Thu, 15 Dec 2016 13:34:36 +0100
+
+initramfs-tools-ubuntu-core (0.7.43+ppa18) xenial; urgency=medium
+
+  * add modules: hv_storvsc, hv_vmbus
+    LP: #1639878
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 30 Nov 2016 10:40:29 +0100
+
+initramfs-tools-ubuntu-core (0.7.43+ppa17) xenial; urgency=medium
+
+  * check if /proc/device-tree/model exists before grepping in it
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Tue, 01 Nov 2016 12:08:13 +0100
+
+initramfs-tools-ubuntu-core (0.7.43+ppa16) xenial; urgency=medium
+
+  * the module is called mmc-block, not emmc-block ... 
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Tue, 01 Nov 2016 11:01:58 +0100
+
+initramfs-tools-ubuntu-core (0.7.43+ppa15) xenial; urgency=medium
+
+  * umount /tmpmnt_kernel after the bind-mounts
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 25 Oct 2016 19:34:44 +0200
+
+initramfs-tools-ubuntu-core (0.7.43+ppa14) xenial; urgency=medium
+
+  * run "sync" after doing the writable copy
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Fri, 21 Oct 2016 14:33:14 +0200
+
+initramfs-tools-ubuntu-core (0.7.43+ppa13) xenial; urgency=medium
+
+  * include sdhci, sdhci-pci, sdhci-acpi, and emmc-block by default in the
+    initrd so x86 machines can boot from SD cards.
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Tue, 18 Oct 2016 14:21:03 +0200
+
+initramfs-tools-ubuntu-core (0.7.43+ppa12) xenial; urgency=medium
+
+  * the grubenv/grub.cfg location with the latest gadget snap has
+    changed and we need to adjust the bind mounts
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 07 Sep 2016 10:35:32 +0200
+
+initramfs-tools-ubuntu-core (0.7.43+ppa11) xenial; urgency=medium
+
+  * Check also for ${tmpboot_mnt}/EFI/ubuntu/grub.cfg when detecting
+    the bootloader. This is where the new-style gadget snap puts it.
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 07 Sep 2016 07:58:16 +0200
+
+initramfs-tools-ubuntu-core (0.7.43+ppa10) xenial; urgency=medium
+
+  * create /etc/machine-id in the writable space if it does not exist and bind
+    mount it so that systemd and dbus can find it on boot
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Mon, 05 Sep 2016 17:39:21 +0200
+
+initramfs-tools-ubuntu-core (0.7.43+ppa9) xenial; urgency=medium
+
+  * remove old snappy_ab code
+  * improve error reporting if snap_{kernel,core} is missing
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 10 Aug 2016 10:03:13 +0200
+
+initramfs-tools-ubuntu-core (0.7.43+ppa8) xenial; urgency=medium
+
+  * update to the new snap_mode environment handling:
+    - snappy_{kernel,os} is now snap_{kernel,core}
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 27 Jul 2016 13:49:05 +0200
+
+initramfs-tools-ubuntu-core (0.7.43+ppa7) xenial; urgency=medium
+
+  * add virtio_scsi to initrd modules (LP: #1600260)
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Wed, 13 Jul 2016 14:11:26 +0200
+
+initramfs-tools-ubuntu-core (0.7.43+ppa6) xenial; urgency=medium
+
+  * fix modules location
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 18 May 2016 16:55:32 +0200
+
+initramfs-tools-ubuntu-core (0.7.43+ppa5) xenial; urgency=medium
+
+  * the module is called "nls_iso8859-1" 
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 04 May 2016 19:57:34 +0200
+
+initramfs-tools-ubuntu-core (0.7.43+ppa4) xenial; urgency=medium
+
+  * add "iso8859-1" to the modules we need
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 04 May 2016 18:41:05 +0200
+
+initramfs-tools-ubuntu-core (0.7.43+ppa3) xenial; urgency=medium
+
+  * use lowercase /efi/ in the initramfs to avoid the boot going
+    into maintenance boot because it assumes we are using uboot
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 04 May 2016 16:06:13 +0200
+
+initramfs-tools-ubuntu-core (0.7.43+ppa1) xenial; urgency=medium
+
+  * inspect the boot partition to determine the bootloader instead
+    of guessing based on the content of the root mount
+    (LP: #1563737)
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Fri, 29 Apr 2016 12:10:51 +0200
+
+initramfs-tools-ubuntu-core (0.7.43) xenial; urgency=medium
+
+  * add usb-storage, ahci and libahci to default initrd
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Tue, 19 Apr 2016 13:15:04 +0200
+
+initramfs-tools-ubuntu-core (0.7.42) xenial; urgency=medium
+
+  * fix snaps location for latest snappy
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 12 Apr 2016 01:11:33 +0200
+
+initramfs-tools-ubuntu-core (0.7.41) xenial; urgency=medium
+
+  * force MODULES=list and only include the squashfs module which should be
+    the only thing we need during boot. this reduces the initrd size by
+    around 15-17MB (depending on the architecture)
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Sat, 09 Apr 2016 14:06:25 +0200
+
+initramfs-tools-ubuntu-core (0.7.40) xenial; urgency=medium
+
+  * drop ubuntu-core-generic-initrd package, not needed anymore, the generic
+    initrd is built directly into the os snap now.
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Thu, 07 Apr 2016 19:27:59 +0200
+
+initramfs-tools-ubuntu-core (0.7.39) xenial; urgency=medium
+
+  * add better logging to GPT resize code
+  * switch printing of resulting GPT to sgdisk so we see the types too
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Thu, 17 Mar 2016 11:45:35 +0100
+
+initramfs-tools-ubuntu-core (0.7.38) xenial; urgency=medium
+
+  * make scripts/local-premount/dragonmac executable
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Wed, 16 Mar 2016 14:43:22 +0100
+
+initramfs-tools-ubuntu-core (0.7.37) xenial; urgency=medium
+
+  * add support for creating /run/macaddr0 based on teh android serial set on
+    the kernel commandline to have persistent MAC addresses on dragonboards
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Wed, 16 Mar 2016 14:40:45 +0100
+
+initramfs-tools-ubuntu-core (0.7.36) xenial; urgency=medium
+
+  * add check for squashfs support and exit with a proper error message.
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Tue, 08 Mar 2016 12:24:32 +0100
+
+initramfs-tools-ubuntu-core (0.7.35) xenial; urgency=medium
+
+  * add binutils to the build chroot (for objdump)
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Mon, 07 Mar 2016 18:22:35 +0100
+
+initramfs-tools-ubuntu-core (0.7.34) xenial; urgency=medium
+
+  * mount the vfat dirs async so writing to them does not take ages, the
+    potential corruption due to setting uboot env vars has been covered by
+    switching to a fixed size binary uboot.env file.
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Mon, 07 Mar 2016 13:01:34 +0100
+
+initramfs-tools-ubuntu-core (0.7.33) xenial; urgency=medium
+
+  * fix GPT partition resizing
+  * add gdisk dependency
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Sun, 06 Mar 2016 13:50:39 +0100
+
+initramfs-tools-ubuntu-core (0.7.32) xenial; urgency=medium
+
+  * and make sure that hack also gets used ...
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Sat, 05 Mar 2016 11:33:00 +0100
+
+initramfs-tools-ubuntu-core (0.7.31) xenial; urgency=medium
+
+  * re-introduce hack to forcefully install libudev
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Sat, 05 Mar 2016 11:23:56 +0100
+
+initramfs-tools-ubuntu-core (0.7.30) xenial; urgency=medium
+
+  * ... and make the hack executable ...
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Fri, 04 Mar 2016 20:15:58 +0100
+
+initramfs-tools-ubuntu-core (0.7.29) xenial; urgency=medium
+
+  * add a hack to copy and link the arm64 linker in teh right places
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Fri, 04 Mar 2016 20:07:16 +0100
+
+initramfs-tools-ubuntu-core (0.7.28) xenial; urgency=medium
+
+  * drop all the test hacks
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Fri, 04 Mar 2016 15:07:38 +0100
+
+initramfs-tools-ubuntu-core (0.7.27) xenial; urgency=medium
+
+  * fix up the fixcups hook a bit
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Fri, 04 Mar 2016 14:47:16 +0100
+
+initramfs-tools-ubuntu-core (0.7.26) xenial; urgency=medium
+
+  * move wait-for-root to an actual hook for a test
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Fri, 04 Mar 2016 14:36:33 +0100
+
+initramfs-tools-ubuntu-core (0.7.25) xenial; urgency=medium
+
+  * remove some hackery from the build script, include libfakechroot and
+    libfakeroot-sysv in the build env
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Fri, 04 Mar 2016 14:15:36 +0100
+
+initramfs-tools-ubuntu-core (0.7.24) xenial; urgency=medium
+
+  * move initramfs-tools-ubuntu-core back to arch: all
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Wed, 02 Mar 2016 22:30:27 +0100
+
+initramfs-tools-ubuntu-core (0.7.23) xenial; urgency=medium
+
+  * hack around arm64 issues with wait-for-root pointing to /lib64 where it
+    should not.
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Wed, 02 Mar 2016 19:24:49 +0100
+
+initramfs-tools-ubuntu-core (0.7.22) xenial; urgency=medium
+
+  * no initctl without upstart, make the code conditional here.
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Wed, 02 Mar 2016 14:14:54 +0100
+
+initramfs-tools-ubuntu-core (0.7.21) xenial; urgency=medium
+
+  * fix removal of plymouth hooks, drop installation of upstart that we
+    inherited from the original touch script.
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Wed, 02 Mar 2016 14:05:17 +0100
+
+initramfs-tools-ubuntu-core (0.7.20) xenial; urgency=medium
+
+  * drop offending initrd hooks harder to fix arm64 FTBFS ...
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Fri, 19 Feb 2016 15:44:43 +0100
+
+initramfs-tools-ubuntu-core (0.7.19) xenial; urgency=medium
+
+  * add proper postinst to remove bits like plymouth from the initrd, revert
+    the dropping of the FTBFS hack again, it is still needed apparently.
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Fri, 19 Feb 2016 15:10:46 +0100
+
+initramfs-tools-ubuntu-core (0.7.18) xenial; urgency=medium
+
+  * disable an old hack that fixed FTBFS by touching libfakeroot-sysv.so, not
+    needed anymore and makes the logs unreadable.
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Fri, 19 Feb 2016 14:55:12 +0100
+
+initramfs-tools-ubuntu-core (0.7.17) xenial; urgency=medium
+
+  * add build-initrd.sh script to build generic initrd binary
+  * adjust build-initrd.sh script for snappy
+  * adjust debian/rules for the above
+  * add needed build deps for the above
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Wed, 17 Feb 2016 17:07:29 +0100
+
+initramfs-tools-ubuntu-core (0.7.16) xenial; urgency=medium
+
+  * use modprobe squashfs to load the squashfs module
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 02 Feb 2016 08:56:34 +0100
+
+initramfs-tools-ubuntu-core (0.7.15) xenial; urgency=medium
+
+  * make sure all writable paths in /etc are mounted by the initrd, else we
+    will have races during boot
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Thu, 03 Dec 2015 18:31:11 +0100
+
+initramfs-tools-ubuntu-core (0.7.14) xenial; urgency=medium
+
+  * fix mount issue in ubuntu-core-rootfs
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 18 Nov 2015 15:30:32 +0100
+
+initramfs-tools-ubuntu-core (0.7.13) xenial; urgency=medium
+
+  * lp:~mvo/ubuntu/wily/initramfs-tools-ubuntu-core/new-and-old:
+    - add support to boot a squashfs based os/kernel all-snap
+      system
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 17 Nov 2015 18:05:58 +0100
+
+initramfs-tools-ubuntu-core (0.7.12) wily; urgency=medium
+
+  * redirect resize script output to /dev/kmsg (console) when "debug" is set
+    on the kernel commandline
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Wed, 21 Oct 2015 11:39:35 +0200
+
+initramfs-tools-ubuntu-core (0.7.11) wily; urgency=medium
+
+   * drop the superfluous "blockdev --rereadpt" call and instead use udevadm
+     settle to make sure the new partitioning scheme is ready for further use
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Sat, 12 Sep 2015 13:01:39 +0200
+
+initramfs-tools-ubuntu-core (0.7.10) wily; urgency=medium
+
+  * switch writable partition resizing to parted so we get support for GPT
+    partitions.
+  * add dependency on parted and use parted in the resize hook
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Mon, 31 Aug 2015 16:44:15 +0200
+
+initramfs-tools-ubuntu-core (0.7.9) wily; urgency=medium
+
+  * drop "discard" from mount options of the writable partition, we want to
+    use fstrim instead (LP: #1479711).
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Mon, 24 Aug 2015 13:54:01 +0200
+
+initramfs-tools-ubuntu-core (0.7.8) wily; urgency=medium
+
+  * add hook to copy sfdisk, blockdev, dirname, realpath and resize2fs in place
+  * add "resize" local-premount script to resize the writable
+    partition to full disk size if the free space on the writable media
+    is more than 10%. keeps a log in /run/initramfs/resize-writable.log
+  * drop creation of already existing /run/initramfs dir in ubuntu-core-rootfs
+    else all former logs get wiped in that dir, /init creates it as one of
+    the very first steps.
+  * add dependency on realpath and coreutils, since we use binaries from both
+    in the resize script
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Thu, 20 Aug 2015 11:05:56 +0200
+
+initramfs-tools-ubuntu-core (0.7.7) wily; urgency=medium
+
+  * Also use wait-for-root when mounting other critical partitions
+    (LP: #1465842)
+
+ -- Ricardo Salveti de Araujo <ricardo.salveti@canonical.com>  Tue, 07 Jul 2015 19:38:14 -0300
+
+initramfs-tools-ubuntu-core (0.7.6) vivid; urgency=low
+
+  * remove system-image-snappy dependency, it is no longer needed,
+    i.e. no files from system-image are installed anymore
+    (as of version 0.5)
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Mon, 13 Apr 2015 16:27:58 -0400
+
+initramfs-tools-ubuntu-core (0.7.5) vivid; urgency=low
+
+  * depend on system-image-snappy instead of system-image
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Mon, 13 Apr 2015 14:44:21 -0400
+
+initramfs-tools-ubuntu-core (0.7.4) vivid; urgency=medium
+
+  [ Steve Langasek ]
+  * Point Vcs-Bzr at the UDD branch now that this package is in the archive.
+
+  [ James Hunt ]
+  * Mount the boot partition with "sync" to minimise change of corruption.
+
+ -- Steve Langasek <steve.langasek@ubuntu.com>  Wed, 25 Feb 2015 10:05:57 -0800
+
+initramfs-tools-ubuntu-core (0.7.3) vivid; urgency=low
+
+  [ James Hunt ]
+  * Ensure writable partition fsck'd and boot partition specifies
+    fs_passno=2 in fstab (LP: #1423529).
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Fri, 20 Feb 2015 22:03:43 +0100
+
+initramfs-tools-ubuntu-core (0.7.2) vivid; urgency=medium
+
+  [ James Hunt ]
+  * scripts/read-only-rootfs:
+    - Use root= rather than looking up partition by name to enable A/B
+      partition support.
+    - Use /writable rather than /userdata.
+    - Handle U-boot.
+    - Ensure root device exists before attempting to mount (LP: #1414251).
+    - Resolve root= argument to ensure paths are being compared,
+      rather than the usual root=LABEL= (which resolves a "snappy upgrade"
+      issue for the parallella).
+  * man/writable-paths.5: Update details and terminology.
+  * Mount boot partition if present.
+  * Rename scripts to more closely reflect package name.
+
+  [ Martin Pitt ]
+  * scripts/read-only-rootfs: Mount /etc/systemd/system. Mounting it in the
+    real system is too late, as at that point systemd has already stated and
+    read /etc/systemd/system/. So we need to mount it in the initramfs
+    already.
+
+  [ Loïc Minier ]
+  * Add Vcs-Bzr.
+  * hooks/ubuntu-core-rootfs: copy /bin/chown into the initrd as well.
+
+ -- Ricardo Salveti de Araujo <ricardo.salveti@canonical.com>  Fri, 13 Feb 2015 14:51:11 -0200
+
+initramfs-tools-ubuntu-core (0.7.1) vivid; urgency=medium
+
+  [ James Hunt ]
+  * scripts/read-only-rootfs: Add a reference to the relevant man page in
+    generated /etc/fstab.
+  
+  [ Michael Vogt ]
+  * do *not* set MODULES=list
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Mon, 24 Nov 2014 10:12:02 +0100
+
+initramfs-tools-ubuntu-core (0.7) vivid; urgency=medium
+
+  * scripts/read-only-rootfs: Revert the previous change to clean up
+    after the upgrader triggered a reboot: it is safer to let the
+    upgrader handle cleanup.
+
+ -- James Hunt <james.hunt@ubuntu.com>  Wed, 05 Nov 2014 16:19:25 +0000
+
+initramfs-tools-ubuntu-core (0.6) vivid; urgency=medium
+
+  * man/writable-paths.5: Clarified the meaning of the transition action.
+  * scripts/read-only-rootfs:
+    - Comments and whitespace fixes.
+    - Clean up after a reboot triggered by ubuntu-core-upgrade(1) detecting
+      processes that had inodes open.
+
+ -- James Hunt <james.hunt@ubuntu.com>  Mon, 03 Nov 2014 14:43:38 +0000
+
+initramfs-tools-ubuntu-core (0.5) vivid; urgency=medium
+
+  * scripts/read-only-rootfs:
+    - Strip trailing slash to avoid double-slash in /etc/fstab. 
+    - Ignore all lines beginning with '#' (not just those starting '# ').
+    - sync_dirs(): Quote arguments.
+    - Add warning comments to /etc/fstab explaining that any changes
+      will be lost.
+  * COPYING: Added missing file.
+  * Remove the upgrader and man page as we no longer want to trigger it
+    in the initramfs (it now lives in the ubuntu-core-upgrader package).
+  * man/writable-paths.5: New man page.
+
+ -- James Hunt <james.hunt@ubuntu.com>  Wed, 15 Oct 2014 16:49:54 +0100
+
+initramfs-tools-ubuntu-core (0.4) utopic; urgency=medium
+
+  * debian/control: Pre-Depend (rather than Depend) on system-image-common
+    as that package's conffiles must be in place by the time the
+    system-image initramfs hook gets called.
+
+ -- James Hunt <james.hunt@ubuntu.com>  Fri, 03 Oct 2014 12:20:18 +0100
+
+initramfs-tools-ubuntu-core (0.3) utopic; urgency=medium
+
+  * scripts/read-only-rootfs:
+    - Revert adding required directories - let the provisioning tools handle
+      this.
+    - Create read-only rootfs bind mount to conceal from the system any
+      future writable operations.
+    - Don't mount writable initially as it isn't needed in this
+      environment (LP: #1376116).
+
+ -- James Hunt <james.hunt@ubuntu.com>  Thu, 02 Oct 2014 14:01:43 +0100
+
+initramfs-tools-ubuntu-core (0.2) utopic; urgency=low
+
+  * scripts/read-only-rootfs: Add required directories.
+  * debian/control: Add missing Depends: on system-image-common (LP: #1376111).
+
+ -- James Hunt <james.hunt@ubuntu.com>  Wed, 01 Oct 2014 13:27:51 +0100
+
+initramfs-tools-ubuntu-core (0.1) utopic; urgency=low
+
+  * Initial release (LP: #1374445).
+
+ -- James Hunt <james.hunt@ubuntu.com>  Fri, 26 Sep 2014 14:29:04 +0100

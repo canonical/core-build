@@ -7,4 +7,12 @@ ubuntu-core-config_*.dsc
 ubuntu-core-config_*.tar.xz
 ubuntu-core-config_*.deb
 ubuntu-core-config_*.changes
-
+initramfs/debian/debhelper-build-stamp
+initramfs/debian/files
+initramfs/debian/initramfs-tools-ubuntu-core.debhelper.log
+initramfs/debian/initramfs-tools-ubuntu-core.substvars
+initramfs/debian/initramfs-tools-ubuntu-core/
+initramfs-tools-ubuntu-core_*.dsc
+initramfs-tools-ubuntu-core_*.tar.xz
+initramfs-tools-ubuntu-core_*.deb
+initramfs-tools-ubuntu-core_*.changes

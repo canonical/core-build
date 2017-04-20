@@ -1,0 +1,217 @@
+.TH writable\-paths 5 "2014-10-13" "Usert Commands"
+.\"
+.SH NAME
+writable\-paths \- make select paths writable
+.\"
+.SH SYNOPSIS
+.B /etc/system-image/writable-paths
+.\"
+.SH DESCRIPTION
+An Ubuntu Core system normally contains three partitions: dual read-only root
+partitions and a writable data partition, used to record all
+persistent system changes.
+
+The file
+.B writable\-paths
+allows specific paths in the root partition filesystem to be made
+writable, whilst leaving the rest of the root filesystem read-only. It
+does this by creating overlaying writable mounts on top of the read-only
+root filesystem. These writable mounts are backed to the writable
+partition.
+
+Any path not specified in this file, either directly or via a parent
+directory is by definition read-only meaning all writes are disallowed.
+
+Note further that this file effectively subsumes the
+.BR fstab (5)
+file since the
+.B writable\-paths
+file is read at early system startup and used to generate dynamically
+the
+.BR fstab (5)
+file for the host.
+
+The format of the file
+is similar to the
+.BR fstab (5)
+file in that it contains a number of whitespace-separated fields which
+specify how each path should be handled.
+
+Comment lines are those starting with \(aq#\(aq.
+
+Note that the order of entries in the file should not matter since it is
+up to the init system to handle mount dependencies when parsing the
+.BR fstab (5)
+file.
+
+.\"
+.SH WARNINGS
+Like the
+.BR fstab (5)
+file that it generates, modifications to the
+.B writable\-paths
+file should be done with extreme caution since invalid (or missing)
+entries may lead to a broken system.
+
+.B Do not
+modify this file unless you understand how to work in the initramfs
+should you introduce problems inadvertently.
+
+It is also important to understand that you should not attempt to
+modify the
+.BR fstab (5) 
+file since all changes will be discarded on next boot.
+
+.\"
+.SH FIELDS
+.nr step 1 1
+.\"
+.IP \n[step] 3
+.B Mount point
+.IP
+A pre-existing directory on the read-only root partition where the
+writable mount will overlaid (in other words the
+.I target
+or
+.I destination
+of the mount).
+.\"
+.IP \n+[step] 3
+.B Persistent storage path
+.IP
+An arbitrary name which will form the mount
+.I source
+directory. Note that this name does
+.B not
+need to relate to a pre-existing directory - it will be created as
+required as a sub-directory of the writable partition.
+
+The following names are reserved as they have special meaning:
+.RS
+.IP \fBnone\fR
+Do not create a directory on the writable partition (used for temporary
+mounts).
+.IP \fBauto\fR
+Choose a name automatically, based on the value of the mount point.
+.RE
+.\"
+.IP \n+[step] 3
+.B Type
+.sp 1
+The type of mount to create. The following are recognised:
+.RS
+.IP \fBpersistent\fR
+Writes to the mount point will be persisted to the writable
+partition.
+.IP \fBsynced\fR
+Any file appearing in the root filesystem will also be copied over to
+writable storage. However file removals are still not synced and files
+existing in both read-only and writeable storage will not be updated.
+.IP \fBtemporary\fR
+Writes to the mount point will only be maintained in-memory (using
+.BR tmpfs (5) "" ") ,"
+meaning all changes will be lost on reboot.
+.RE
+.\"
+.IP \n+[step] 3
+.B Action
+.sp 1
+Determines whether the mount requires a further operation before it
+becomes usable. Recognised options:
+.RS
+.IP \fBtransition\fR
+Allows moving a read-only rootfs directory to a writeable directory
+stored on the writable partition. This is achieved by performing a
+verbatim move (technically a copy followed by removal of the original
+data) of any data from the mount point on the root filesystem to the
+writable filesystem before mounting.
+This
+option requires the
+.B type
+field to be
+.BR \%persistent "."
+
+.I WARNING:
+This is a
+.B one-off operation
+which requires that the source directory on
+the writable partition
+.B not
+exist initially: if this condition is satisfied, the directory will then be
+created and the data moved on first boot. Although the mountpoint will
+be writable, note that subsequent boots will ignore any new files
+appearing or disappearing in the original read-only rootfs location
+unless you perform a factory reset.
+.IP \fBnone\fR
+No action is performed.
+.RE
+.\"
+.IP \n+[step] 3
+.B Mount Flags
+.sp 1
+Normally this is either
+.B none
+or
+.B defaults
+but can be any flags recognised by
+.BR mount (8) "" "."
+.\"
+.SH EXAMPLES
+
+.RS
+
+.IP \(bu 4
+Allow persistent writes to
+.I /home
+with all data being redirected to the directory
+.I home_directories
+below the writable partition mountpoint:
+.RS
+.sp 1
+.nf
+/home  home_directories  persistent  transition  none
+.fi
+.RE
+
+.IP \(bu 4
+Make
+.I /var/lib/logrotate
+writable and persistent by storing all writes in the writable
+partition in an automatically-chosen directory name:
+.RS
+.sp 1
+.nf
+/var/lib/logrotate  auto  persistent  none  none
+.fi
+.RE
+
+.IP \(bu 4
+Use non-persistent storage for /tmp:
+.RS
+.sp 1
+.nf
+/tmp  none  temporary  none  defaults
+.fi
+.RE
+
+.RE
+
+.\"
+.SH FILES
+.IR /etc/system-image/writable-paths
+.\"
+.SH COPYRIGHT
+Copyright \(co 2014 Canonical Ltd.
+.\"
+.SH LICENSE
+GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.
+.br
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+.\"
+.SH "SEE ALSO"
+.BR fstab (5),
+.BR initramfs-tools (8),
+.BR mount (8),
+.BR system\-image\-cli (1),
+.BR tmpfs (5).

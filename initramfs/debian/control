@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
 Build-Depends: debhelper (>= 9), debootstrap, lsb-release, fakeroot, fakechroot
 Standards-Version: 3.9.5
-Vcs-Bzr: lp:ubuntu/initramfs-tools-ubuntu-core
+Vcs-Git: Vcs-Git: https://github.com/snapcore/core-build
 
 Package: initramfs-tools-ubuntu-core
 Architecture: all

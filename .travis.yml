@@ -20,5 +20,5 @@ install:
   - sudo cp -a initramfs config $CHROOT/build/
     # install a deb build env
 script:
-  - sudo chroot $CHROOT sh -c 'for file in $(find . | xargs file | grep shell |grep -v .git| sed 's/:.*$/ /g' | tr -d '\n'); do shellcheck "$SHCKOPTS" "$file"; done'
+  - sudo chroot $CHROOT sh -c 'for file in $(find /build | xargs file | grep shell |grep -v .git| sed 's/:.*$/ /g' | tr -d '\n'); do shellcheck "$SHCKOPTS" "$file"; done'
     # test build both debs unsigned in a xenial chroot

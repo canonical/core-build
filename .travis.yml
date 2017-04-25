@@ -9,5 +9,5 @@ install:
   - sudo apt install shellcheck
     # install a deb build env
 script:
-  - for file in $(find . | xargs file | grep shell |grep -v .git| sed 's/:.*$/ /g' | tr -d '\n'); do shellcheck "$SHCKOPTS" "$file"; done
+  - sh -c 'for file in $(find . | xargs file | grep shell |grep -v .git| sed 's/:.*$/ /g' | tr -d '\n'); do shellcheck "$SHCKOPTS" "$file"; done'
     # test build both debs unsigned in a xenial chroot

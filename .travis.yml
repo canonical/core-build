@@ -18,6 +18,7 @@ install:
   - sudo chroot $CHROOT apt update
   - sudo chroot $CHROOT apt install -y shellcheck
   - sudo cp -a initramfs config $CHROOT/build/
+  - sudo find $CHROOT/build/
     # install a deb build env
 script:
   - sudo chroot $CHROOT sh -e -c "for file in $(find /build | xargs file | grep shell |grep -v .git| sed 's/:.*$/ /g' | tr -d '\n'); do shellcheck $SHCKOPTS $file; done"

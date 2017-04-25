@@ -6,7 +6,7 @@ env:
     - CHROOT=xenial-test-chroot
     - LC_ALL=C.UTF-8
     - LANG=C.UTF-8
-    - SHCKOPTS="-e SC2013,SC2129"
+      # - SHCKOPTS="-e SC2013,SC2129"
       # SC2013: we actually want words in the cases where this complaint happens
       # SC2129: we want to see when the logging stopped so grouping is no option
 install:

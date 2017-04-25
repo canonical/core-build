@@ -1,0 +1,12 @@
+language: C
+dist: xenial
+env:
+  - SHCKOPTS="-e SC2013,SC2129"
+    # SC2013: we actually want words in the cases where this complaint happens
+    # SC2129: we want to see when the logging stopped so grouping is no option
+install:
+  - sudo apt install shellcheck
+    # install a deb build env
+script:
+  - for file in $(find . | xargs file | grep shell |grep -v .git| sed 's/:.*$/ /g' | tr -d '\n'); do shellcheck "$SHCKOPTS" "$file"; done
+    # test build both debs unsigned in a xenial chroot

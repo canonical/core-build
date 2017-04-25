@@ -16,7 +16,7 @@ install:
   - sudo cp /etc/resolv.conf $CHROOT/etc/
   - sudo mount --bind /dev $CHROOT/dev
   - sudo chroot $CHROOT apt update
-  - sudo chroot $CHROOT apt install -y shellcheck
+  - sudo chroot $CHROOT apt install -y shellcheck file
   - sudo cp -a initramfs config $CHROOT/build/
     # install a deb build env
 script:

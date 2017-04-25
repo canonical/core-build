@@ -1,0 +1,39 @@
+#!/bin/sh
+
+set -e
+
+ARCH="$(dpkg --print-architecture)"
+
+apply_diversions()
+{
+        DIR=/usr/share/initramfs-tools
+        SUBDIRS="hooks scripts/local-premount scripts/init-top scripts/init-bottom scripts/panic"
+        FILES="compcache dmsetup plymouth console_setup kbd thermal"
+
+        for file in $FILES; do
+                for subdir in $SUBDIRS; do
+                        if [ -e $DIR/$subdir/$file ]; then
+                                diversion="$file.$(echo $subdir|sed -e 's/scripts\///'|sed -e 's/-/./').diverted"
+                                dpkg-divert --add --local --divert $DIR/$diversion --rename $DIR/$subdir/$file >/dev/null 2>&1 || true
+                        fi
+                done
+        done
+}
+
+copy_module_files()
+{
+    MODFILE="/usr/lib/initramfs-tools-ubuntu-core/modules.$ARCH"
+
+    if [ -e "$MODFILE" ]; then
+        cp "$MODFILE" /usr/share/initramfs-tools/modules.d/ubuntu-core-rootfs
+    fi
+
+}
+
+if [ "$1" = "configure" ]; then
+        # move bits out of the way that make our initrd to big
+        apply_diversions
+        copy_module_files
+fi
+
+#DEBHELPER#

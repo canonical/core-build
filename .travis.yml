@@ -2,12 +2,23 @@ language: C
 dist: xenial
 env:
   global:
+    - URL=http://cdimage.ubuntu.com/ubuntu-base/xenial/daily/current/xenial-base-amd64.tar.gz
+    - CHROOT=xenial-test-chroot
+    - LC_ALL=C.UTF-8
+    - LANG=C.UTF-8
     - SHCKOPTS="-e SC2013,SC2129"
       # SC2013: we actually want words in the cases where this complaint happens
       # SC2129: we want to see when the logging stopped so grouping is no option
 install:
   - sudo apt install shellcheck
+  - mkdir -p $CHROOT/build
+  - wget -q -O - $URL | zcat - | sudo tar x -C $CHROOT
+  - sudo cp /etc/resolv.conf $CHROOT/etc/
+  - sudo mount --bind /dev $CHROOT/dev
+  - sudo chroot $CHROOT apt update
+  - sudo chroot $CHROOT apt install -y shellcheck
+  - sudo cp -a initramfs config $CHROOT/build/
     # install a deb build env
 script:
-  - sh -c 'for file in $(find . | xargs file | grep shell |grep -v .git| sed 's/:.*$/ /g' | tr -d '\n'); do shellcheck "$SHCKOPTS" "$file"; done'
+  - sudo chroot $CHROOT sh -c 'for file in $(find . | xargs file | grep shell |grep -v .git| sed 's/:.*$/ /g' | tr -d '\n'); do shellcheck "$SHCKOPTS" "$file"; done'
     # test build both debs unsigned in a xenial chroot

@@ -19,7 +19,7 @@ install:
   - sudo chroot $CHROOT apt install -y shellcheck file build-essential devscripts
   - sudo cp -a initramfs config $CHROOT/build/
     # install all build deps defined in the control file
-  - sudo chroot $CHROOT sh -c 'apt install -y $(grep -h Build-Depends: */debian/control|sed "s/^.*: //g;s/,//g;s/([^)]*)//g"| tr -d "\n"| sort | uniq)'
+  - sudo chroot $CHROOT apt install -y $(grep -h Build-Depends {initramfs,config}/debian/control|sed 's/^.*://g;s/,//g;s/([^)]*)//g'| tr -d '\n'| sort | uniq)
 script:
   - sudo chroot $CHROOT sh -c 'cd build; for file in $(find . | xargs file | grep shell |grep -v .git| sed "s/:.*$/ /g" | tr -d "\n"); do shellcheck $SHCKOPTS $file; done'
     # test build both debs unsigned in a xenial chroot

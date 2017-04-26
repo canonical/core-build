@@ -10,7 +10,6 @@ env:
       # SC2013: we actually want words in the cases where this complaint happens
       # SC2129: we want to see when the logging stopped so grouping is no option
 install:
-  - sudo apt install shellcheck
   - mkdir -p $CHROOT/build
   - wget -q -O - $URL | zcat - | sudo tar x -C $CHROOT
   - sudo cp /etc/resolv.conf $CHROOT/etc/

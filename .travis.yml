@@ -1,4 +1,4 @@
-language: C
+language: shell
 dist: xenial
 env:
   global:

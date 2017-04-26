@@ -25,3 +25,6 @@ script:
     # test build src packages unsigned in a xenial chroot
   - sudo chroot xenial-test-chroot sh -c 'cd build/initramfs; LC_ALL=C.UTF-8 dpkg-buildpackage -rfakeroot -S -sa -us -uc'
   - sudo chroot xenial-test-chroot sh -c 'cd build/config; LC_ALL=C.UTF-8 dpkg-buildpackage -rfakeroot -S -sa -us -uc'
+    # and also test build binary packages unsigned in a xenial chroot
+  - sudo chroot xenial-test-chroot sh -c 'cd build/initramfs; LC_ALL=C.UTF-8 dpkg-buildpackage -rfakeroot -b -us -uc'
+  - sudo chroot xenial-test-chroot sh -c 'cd build/config; LC_ALL=C.UTF-8 dpkg-buildpackage -rfakeroot -b -us -uc'

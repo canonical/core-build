@@ -4,6 +4,7 @@ env:
   global:
     - URL=http://cdimage.ubuntu.com/ubuntu-base/xenial/daily/current/xenial-base-amd64.tar.gz
     - CHROOT=xenial-test-chroot
+    - CHROOT_RUN="sudo chroot $CHROOT"
     - LC_ALL=C.UTF-8
     - LANG=C.UTF-8
     - SHCKOPTS="-e SC2013,SC2129"
@@ -14,16 +15,16 @@ install:
   - wget -q -O - $URL | zcat - | sudo tar x -C $CHROOT
   - sudo cp /etc/resolv.conf $CHROOT/etc/
   - sudo mount --bind /dev $CHROOT/dev
-  - sudo chroot $CHROOT apt update
-  - sudo chroot $CHROOT apt install -y shellcheck file build-essential devscripts
+  - $CHROOT_RUN apt update
+  - $CHROOT_RUN apt install -y shellcheck file build-essential devscripts
   - sudo cp -a initramfs config $CHROOT/build/
     # install all build deps defined in the control file
-  - sudo chroot $CHROOT apt install -y $(grep -h Build-Depends {initramfs,config}/debian/control|sed 's/^.*://g;s/,//g;s/([^)]*)//g'| tr -d '\n'| sort | uniq)
+  - $CHROOT_RUN apt install -y $(grep -h Build-Depends {initramfs,config}/debian/control|sed 's/^.*://g;s/,//g;s/([^)]*)//g'| tr -d '\n'| sort | uniq)
 script:
-  - sudo chroot $CHROOT sh -c 'cd build; for file in $(find . | xargs file | grep shell |grep -v .git| sed "s/:.*$/ /g" | tr -d "\n"); do shellcheck $SHCKOPTS $file; done'
+  - $CHROOT_RUN sh -c 'cd build; for file in $(find . | xargs file | grep shell |grep -v .git| sed "s/:.*$/ /g" | tr -d "\n"); do shellcheck $SHCKOPTS $file; done'
     # test build src packages unsigned in a xenial chroot
-  - sudo chroot xenial-test-chroot sh -c 'cd build/initramfs; LC_ALL=C.UTF-8 dpkg-buildpackage -rfakeroot -S -sa -us -uc'
-  - sudo chroot xenial-test-chroot sh -c 'cd build/config; LC_ALL=C.UTF-8 dpkg-buildpackage -rfakeroot -S -sa -us -uc'
+  - $CHROOT_RUN sh -c 'cd build/initramfs; LC_ALL=C.UTF-8 dpkg-buildpackage -rfakeroot -S -sa -us -uc'
+  - $CHROOT_RUN sh -c 'cd build/config; LC_ALL=C.UTF-8 dpkg-buildpackage -rfakeroot -S -sa -us -uc'
     # and also test build binary packages unsigned in a xenial chroot
-  - sudo chroot xenial-test-chroot sh -c 'cd build/initramfs; LC_ALL=C.UTF-8 dpkg-buildpackage -rfakeroot -b -us -uc'
-  - sudo chroot xenial-test-chroot sh -c 'cd build/config; LC_ALL=C.UTF-8 dpkg-buildpackage -rfakeroot -b -us -uc'
+  - $CHROOT_RUN sh -c 'cd build/initramfs; LC_ALL=C.UTF-8 dpkg-buildpackage -rfakeroot -b -us -uc'
+  - $CHROOT_RUN sh -c 'cd build/config; LC_ALL=C.UTF-8 dpkg-buildpackage -rfakeroot -b -us -uc'

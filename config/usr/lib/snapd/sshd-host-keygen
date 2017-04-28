@@ -39,7 +39,7 @@ create_key() {
 
 	if echo "$hostkeys" | grep -x "$file" >/dev/null && \
 	   [ ! -f "$file" ] ; then
-		echo -n $msg
+		printf "%s" "$msg"
 		ssh-keygen -q -f "$file" -N '' "$@"
 		echo
 		if which restorecon >/dev/null 2>&1; then

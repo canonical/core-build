@@ -12,9 +12,9 @@ apply_diversions()
 
         for file in $FILES; do
                 for subdir in $SUBDIRS; do
-                        if [ -e $DIR/$subdir/$file ]; then
-                                diversion="$file.$(echo $subdir|sed -e 's/scripts\///'|sed -e 's/-/./').diverted"
-                                dpkg-divert --add --local --divert $DIR/$diversion --rename $DIR/$subdir/$file >/dev/null 2>&1 || true
+                        if [ -e "$DIR/$subdir/$file" ]; then
+                                diversion="$file.$(echo "$subdir"|sed -e 's/scripts\///'|sed -e 's/-/./').diverted"
+                                dpkg-divert --add --local --divert "$DIR/$diversion" --rename "$DIR/$subdir/$file" >/dev/null 2>&1 || true
                         fi
                 done
         done

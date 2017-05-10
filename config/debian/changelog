@@ -1,3 +1,24 @@
+ubuntu-core-config (0.6.40+ppa45) xenial; urgency=medium
+
+  [ Ryan Harper ]
+  * Add cloud-init datasource identify policy (ds-identify.cfg). The policy
+    configured requires cloud-init systemd generator to detect local
+    datasource to enable cloud-init, otherwise it will remain disabled.
+  * Enable cloud-init to use netplan renderer for network configurations
+  * Update writable-paths to sync /etc/cloud and /etc/cloud.cfg.d which
+    enables the default configuration of cloud-init in the core image to be
+    merged with configuration files which are added to the writable
+    partition.
+  * Dropped apt_configure configuration, it wasn't correct and cloud-init
+    now skips running this module if the system it's running on is
+    Ubuntu Core
+
+  [ Oliver Grawert ]
+  * make /etc/environment writable
+  * fix quoting of all shell scripts to comply with shellcheck tests
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Wed, 10 May 2017 18:08:29 +0200
+
 ubuntu-core-config (0.6.40+ppa44) xenial; urgency=medium
 
   * Add /lib/systemd/system/wpa_supplicant.service.d/snap.conf to allow

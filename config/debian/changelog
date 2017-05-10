@@ -1,3 +1,11 @@
+ubuntu-core-config (0.6.40+ppa44) xenial; urgency=medium
+
+  * Add /lib/systemd/system/wpa_supplicant.service.d/snap.conf to allow
+    a system to use a wpa-supplicant coming from a snap rather than the
+    one bundled with the core snap.
+
+ -- Simon Fels <simon.fels@canonical.com>  Wed, 08 Mar 2017 09:22:16 +0100
+
 ubuntu-core-config (0.6.40+ppa43) xenial; urgency=medium
 
   * re-build after source setup change to make sure everything still works

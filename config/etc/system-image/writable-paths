@@ -107,4 +107,6 @@
 /etc/rsyslog.d                          auto                    persistent  transition  none
 /etc/systemd/timesyncd.conf             auto                    persistent  transition  none
 /etc/default/swapfile                   auto                    persistent  transition  none
+# allow system wide proxy setting
+/etc/environment                        auto                    persistent  transition  none
 

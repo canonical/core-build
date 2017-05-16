@@ -13,6 +13,7 @@
 /tmp                                    none                    temporary   none        defaults
 /mnt                                    none                    temporary   none        defaults
 /media                                  none                    temporary   none        defaults
+/boot/androidboot                       auto                    persistent  none        none
 /var/crash                              auto                    persistent  none        none
 /var/lib/AccountsService/users          auto                    persistent  none        none
 # snap data

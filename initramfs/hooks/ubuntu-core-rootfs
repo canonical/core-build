@@ -22,4 +22,6 @@ esac
 copy_exec /bin/chown
 copy_exec /sbin/findfs
 copy_exec /sbin/e2fsck
+copy_exec /usr/bin/abootimg
+
 manual_add_modules squashfs

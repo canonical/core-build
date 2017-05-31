@@ -117,7 +117,6 @@ mountroot()
 	writable_label="writable"
 	writable_mnt="/tmpmnt_${writable_label}"
 	mkdir -p "$writable_mnt"
-	fsck_writable "$writable_label" "$writable_mnt"
 
 	# mount the root fs
 	do_root_mounting

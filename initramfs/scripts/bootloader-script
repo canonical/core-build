@@ -164,6 +164,9 @@ mountroot()
 	snap_mode="trying"
 	saveenv $aboot_env
 
+	# Force panic if we fail while trying to update
+	set -e
+
 	if [ "$snap_try_core" != "" ]; then
 		snap_core="$snap_try_core"
 	fi

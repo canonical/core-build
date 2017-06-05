@@ -69,6 +69,7 @@ snap_try_core=$snap_try_core
 snap_try_kernel=$snap_try_kernel
 snap_core=$snap_core
 snap_kernel=$snap_kernel" > "$1"
+	sync
 }
 
 # Flash kernel snap with name $1 to partition $2

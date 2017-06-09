@@ -5,13 +5,7 @@
 # Entry point: mountroot().
 #---------------------------------------------------------------------
 
-pre_mountroot()
-{
-	local script_dir="/scripts/local-top"
-	[ "$quiet" != "y" ] && log_begin_msg "Running $script_dir"
-	run_scripts "$script_dir"
-	[ "$quiet" != "y" ] && log_end_msg
-}
+. /scripts/ubuntu-core-functions
 
 sync_dirs()
 {
@@ -41,23 +35,6 @@ sync_dirs()
 	done
 
 	cd "$OLD_PWD"
-}
-
-# Determine full path to disk partition given a filesystem label.
-get_partition_from_label()
-{
-	local label="$1"
-
-	[ -n "$label" ] || panic "need FS label"
-
-	# Make sure the device has been created by udev before looking for it
-	# Don't need to panic, since the output will be validated outside this function
-	wait-for-root "LABEL=$label" "${ROOTDELAY:-180}" >/dev/null || true
-
-	local part=$(find /dev -name "$label"|tail -1)
-	[ -z "$part" ] && return
-	local path=$(readlink -f "$part")
-	[ -n "$path" ] && echo "$path"
 }
 
 # Process the list of bind-mounts (but don't mount them - systemd will handle that)
@@ -188,37 +165,9 @@ fsck_writable()
 
 }
 
-# setup $rootmnt based on os/kernel snaps
-do_root_mounting()
+# Mount core and kernel snaps
+mount_snaps()
 {
-        root="LABEL=$writable_label"
-
-	# Make sure the device has been created by udev before we try to mount
-	wait-for-root "$root" "${ROOTDELAY:-180}" || panic "unable to find root partition '$root'"
-
-	[ -n "$root" ] || panic "no root partition specified"
-
-	if echo "$root" | grep -q ^/; then
-		path="$root"
-	else
-		# convert UUID/LABEL to a device name
-		path=$(findfs "$root" 2>/dev/null || :)
-	fi
-
-	[ -e "$path" ] || panic "root device $path does not exist"
-
-        # try loading squashfs, but don't fail if its e.g. in the kernel
-        # already
-        modprobe squashfs || true
-
-        if ! grep -q squashfs /proc/filesystems; then
-        	 panic "no squashfs support found in your system, aborting"
-        fi
-
-        # mount writable rw
-        path=$(get_partition_from_label "$writable_label")
-        mount "$path" "$writable_mnt"
-
         # mount OS snap
         mount "${writable_mnt}/system-data/var/lib/snapd/snaps/${snap_core}" "$rootmnt"
 
@@ -235,9 +184,8 @@ do_root_mounting()
         # now we can umount the kernel and the bind mounts are still intact
         # (magic!)
         umount "$kernel_mnt"
-}    
+}
 
-   
 #---------------------------------------------------------------------
 # XXX: Entry point - called by the initramfs "/init" script.
 #---------------------------------------------------------------------
@@ -278,6 +226,8 @@ mountroot()
 
         # mount the root fs
         do_root_mounting
+        # mount core and kernel snaps
+        mount_snaps
         
         # mount /run
 	echo "initrd: mounting /run" >/dev/kmsg || true
@@ -346,6 +296,15 @@ mountroot()
 
                 # let systemd do the actual mounting
                 umount "$tmpboot_mnt"
+        elif abootimg -i "$(findfs PARTLABEL=recovery)" >/dev/null 2>&1; then
+                echo "android style bootloader detected" >/dev/kmsg || true
+                androiddir="writable/androidboot"
+                mkdir -p "${rootmnt}/${androiddir}"
+                if [ ! -e "${rootmnt}/${androiddir}/androidboot.env" ]; then
+                        echo -e "snap_mode=\nsnap_core=$snap_core\nsnap_kernel=$snap_kernel\nsnap_try_core=\nsnap_try_kernel=" > \
+                             "${rootmnt}/${androiddir}/androidboot.env"
+                fi
+                mount -o bind "${rootmnt}/${androiddir}" "${rootmnt}/boot/androidboot"
 	fi
 
 	# Mount the systemd overlay so that we have a complete root partition during boot

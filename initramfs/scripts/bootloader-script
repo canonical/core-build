@@ -4,62 +4,7 @@
 # Entry point: mountroot().
 #---------------------------------------------------------------------
 
-pre_mountroot()
-{
-	local script_dir="/scripts/local-top"
-	log_begin_msg "Running $script_dir"
-	run_scripts "$script_dir"
-	log_end_msg
-}
-
-# Determine full path to disk partition given a filesystem label.
-get_partition_from_label()
-{
-	local label="$1"
-
-	[ -n "$label" ] || panic "need FS label"
-
-	# Make sure the device has been created by udev before looking for it
-	# Don't need to panic, since the output will be validated outside this function
-	wait-for-root "LABEL=$label" "${ROOTDELAY:-180}" >/dev/null || true
-
-	local part=$(find /dev -name "$label"|tail -1)
-	[ -z "$part" ] && return
-	local path=$(readlink -f "$part")
-	[ -n "$path" ] && echo "$path"
-}
-
-# setup $rootmnt based on os/kernel snaps
-do_root_mounting()
-{
-	root="LABEL=$writable_label"
-
-	# Make sure the device has been created by udev before we try to mount
-	wait-for-root "$root" "${ROOTDELAY:-180}" || panic "unable to find root partition '$root'"
-
-	[ -n "$root" ] || panic "no root partition specified"
-
-	if echo "$root" | grep -q ^/; then
-		path="$root"
-	else
-		# convert UUID/LABEL to a device name
-		path=$(findfs "$root" 2>/dev/null || :)
-	fi
-
-	[ -e "$path" ] || panic "root device $path does not exist"
-
-	# try loading squashfs, but don't fail if its e.g. in the kernel
-	# already
-	modprobe squashfs || true
-
-	if ! grep -q squashfs /proc/filesystems; then
-		 panic "no squashfs support found in your system, aborting"
-	fi
-
-	# mount writable rw
-	path=$(get_partition_from_label "$writable_label")
-	mount "$path" "$writable_mnt"
-}
+. /scripts/ubuntu-core-functions
 
 # Save "bootloader" environment in $1
 saveenv()
@@ -114,7 +59,6 @@ mountroot()
 	run_scripts /scripts/local-premount
 	log_end_msg
 
-	# always ensure writable is in a good state
 	writable_label="writable"
 	writable_mnt="/tmpmnt_${writable_label}"
 	mkdir -p "$writable_mnt"

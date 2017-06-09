@@ -304,7 +304,7 @@ mountroot()
                         echo -e "snap_mode=\nsnap_core=$snap_core\nsnap_kernel=$snap_kernel\nsnap_try_core=\nsnap_try_kernel=" > \
                              "${rootmnt}/${androiddir}/androidboot.env"
                 fi
-                mount -o bind "${rootmnt}/writable/androidboot" "${rootmnt}/boot/androidboot"
+                mount -o bind "${rootmnt}/${androiddir}" "${rootmnt}/boot/androidboot"
 	fi
 
 	# Mount the systemd overlay so that we have a complete root partition during boot

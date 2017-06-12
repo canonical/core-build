@@ -16,3 +16,15 @@ initramfs-tools-ubuntu-core_*.dsc
 initramfs-tools-ubuntu-core_*.tar.xz
 initramfs-tools-ubuntu-core_*.deb
 initramfs-tools-ubuntu-core_*.changes
+initramfs/testing/*.assert
+initramfs/testing/*.o
+initramfs/testing/*.snap
+initramfs/testing/.mypy_cache/
+initramfs/testing/__pycache__
+initramfs/testing/core-snap
+initramfs/testing/disk.img
+initramfs/testing/init
+initramfs/testing/initrd
+initramfs/testing/initrd.*.cpio.gz
+initramfs/testing/kernel
+initramfs/testing/kernel-snap

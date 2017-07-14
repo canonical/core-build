@@ -33,6 +33,7 @@ do_root_mounting()
 	# Make sure the device has been created by udev before we try to mount
 	wait-for-root "$root" "${ROOTDELAY:-180}" || panic "unable to find root partition '$root'"
 
+	# FIXME: This is never false since we set $root above
 	[ -n "$root" ] || panic "no root partition specified"
 
 	if echo "$root" | grep -q ^/; then

@@ -14,13 +14,21 @@ install:
   - mkdir -p $CHROOT/build
   - wget -q -O - $URL | zcat - | sudo tar x -C $CHROOT
   - sudo cp /etc/resolv.conf $CHROOT/etc/
-  - sudo mount --bind /dev $CHROOT/dev
+  - sudo mount --rbind /dev $CHROOT/dev
+  - sudo mount --rbind /proc $CHROOT/proc
+  - sudo mount --rbind /sys $CHROOT/sys
   - $CHROOT_RUN apt update
   - $CHROOT_RUN apt install -y shellcheck file build-essential devscripts
+  - sudo modprobe kvm
+  - $CHROOT_RUN apt install -y qemu-system-x86 qemu-utils python3 snapd squashfs-tools
   - sudo cp -a initramfs config $CHROOT/build/
     # install all build deps defined in the control file
   - $CHROOT_RUN apt install -y $(grep -h Build-Depends {initramfs,config}/debian/control|sed 's/^.*://g;s/,//g;s/([^)]*)//g'| tr -d '\n'| sort | uniq)
+  - $CHROOT_RUN sh -c 'LC_ALL=C.UTF-8 make -C build/initramfs/testing'
 script:
+    # run unit tests in a virtual machine
+  - $CHROOT_RUN sh -c 'cd build/initramfs/testing; LC_ALL=C.UTF-8 ./aaa-tests.py --verbose'
+    # run shellcheck on all the shell scripts
   - $CHROOT_RUN sh -c 'cd build; for file in $(find . | xargs file | grep shell |grep -v .git| sed "s/:.*$/ /g" | tr -d "\n"); do shellcheck $SHCKOPTS $file; done'
     # test build src packages unsigned in a xenial chroot
   - $CHROOT_RUN sh -c 'cd build/initramfs; LC_ALL=C.UTF-8 dpkg-buildpackage -rfakeroot -S -sa -us -uc'

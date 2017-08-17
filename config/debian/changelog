@@ -1,3 +1,9 @@
+ubuntu-core-config (0.6.40+ppa46) xenial; urgency=medium
+
+  *  fix strict mode, ensure cloud-init only runs on positive id
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Thu, 17 Aug 2017 12:08:50 +0200
+
 ubuntu-core-config (0.6.40+ppa45) xenial; urgency=medium
 
   [ Ryan Harper ]

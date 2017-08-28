@@ -1,3 +1,11 @@
+initramfs-tools-ubuntu-core (0.7.43+ppa21) xenial; urgency=medium
+
+  * add androidboot support (https://github.com/snapcore/core-build/pull/13)
+  * add unit tests for initramfs code
+    (https://github.com/snapcore/core-build/pull/14)
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Mon, 28 Aug 2017 18:35:13 +0200
+
 initramfs-tools-ubuntu-core (0.7.43+ppa20) xenial; urgency=medium
 
   * drop old modules/firmware mounting code as it causes the kernel snap to be

@@ -56,7 +56,7 @@
 # required by update-initramfs
 /var/lib/initramfs-tools                auto                    persistent  transition  none
 # systemd
-/etc/systemd/system                     auto                    persistent  transition  none
+/etc/systemd/system                     auto                    synced      none        none
 # needed for usb tethering
 /var/lib/misc                           auto                    persistent  transition  none
 # walinuxagent

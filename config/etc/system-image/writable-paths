@@ -72,7 +72,7 @@
 /etc/network/if-up.d                    auto                    persistent  transition  none
 /etc/NetworkManager/system-connections  auto                    persistent  none        none
 # snappy security policy, etc
-/var/lib/snapd                         auto                    persistent  transition  none
+/var/lib/snapd                         auto                     synced      none        none
 # udev
 /etc/udev/rules.d                       auto                    persistent  transition  none
 # random seed
@@ -109,4 +109,6 @@
 /etc/default/swapfile                   auto                    persistent  transition  none
 # allow system wide proxy setting
 /etc/environment                        auto                    persistent  transition  none
+# https://github.com/snapcore/snapd/pull/3866
+/var/cache/snapd                         auto                   synced      none        none
 

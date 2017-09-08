@@ -92,6 +92,10 @@ do_mbr()
 free_space=$((device_size-sum_size))
 min_free_space=$((device_size/10))
 
+# this should never be empty, else argument checking of resize2fs 
+# will recognize it as empty string (due to the quoting of the arg below) and fail
+resizeopts="-p"
+
 if [ "$min_free_space" -lt "$free_space" ]; then
     echo "initrd: found more than 10% free space on disk, resizing ${writable_part}" >/dev/kmsg || true
     echo "initrd: partition to full disk size, see ${LOGFILE} for details" >/dev/kmsg || true
@@ -102,12 +106,12 @@ if [ "$min_free_space" -lt "$free_space" ]; then
     case $table in
         gpt)
             # do_gpt needs the device name
-            do_gpt "$device" >>$LOGFILE 2>&1
+            do_gpt "$device" >>$LOGFILE 2>&1       
             ;;
         mbr|msdos)
             # do_mbr needs the device node and partition number
             do_mbr "$device" "$partition" >>$LOGFILE 2>&1
-            resizeopts="-f"
+            resizeopts="-fp"
             ;;
         *)
             echo "unknown partition table type, not resizing" >>$LOGFILE

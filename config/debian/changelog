@@ -1,3 +1,10 @@
+ubuntu-core-config (0.6.40+ppa47) xenial; urgency=medium
+
+  * switch /etc/systemd/system to "synced" mode
+  * make /var/{cache,lib}/snapd synced
+
+ -- Oliver Grawert <ogra@ubuntu.com>  Fri, 08 Sep 2017 15:46:04 +0200
+
 ubuntu-core-config (0.6.40+ppa46) xenial; urgency=medium
 
   *  fix strict mode, ensure cloud-init only runs on positive id

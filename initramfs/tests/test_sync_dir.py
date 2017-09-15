@@ -20,15 +20,19 @@ import subprocess
 import tempfile
 import unittest
 
+
 class SyncDirTestCase(unittest.TestCase):
 
-    def test_sync_dir_trivial(self):
-        tmpdir = tempfile.mkdtemp()
-        self.addCleanup(shutil.rmtree, tmpdir)
+    def setUp(self):
+        self.tmpdir = tempfile.mkdtemp()
+        self.addCleanup(shutil.rmtree, self.tmpdir)
+        self.make_ubuntu_core_rootfs_script_testable()
+        self.make_ubuntu_core_rootfs_runner()
 
-        # ensure we can test it
+    def make_ubuntu_core_rootfs_script_testable(self):
+        """Copy ubuntu-core-rootfs into tmpdir and fixup imports"""
         basedir = os.path.join(os.path.dirname(__file__), "..")
-        dst = os.path.join(tmpdir, "ubuntu-core-rootfs")
+        dst = os.path.join(self.tmpdir, "ubuntu-core-rootfs")
         shutil.copy(os.path.join(basedir, "scripts/ubuntu-core-rootfs"), dst)
         with open(dst) as fin:
             with open(dst+".tmp", "w") as fout:
@@ -37,23 +41,46 @@ class SyncDirTestCase(unittest.TestCase):
                     fout.write(line)
         os.rename(dst+".tmp", dst)
 
-        # write shell wrapper for sync_dirs()
-        with open(os.path.join(tmpdir, "runner.sh"), "w") as fp:
+    def make_ubuntu_core_rootfs_runner(self):
+        with open(os.path.join(self.tmpdir, "runner.sh"), "w") as fp:
             fp.write("""#!/bin/sh
 . ./ubuntu-core-rootfs
 
 sync_dirs "$1" "$2" "$3"
 """)
-        
-        # actually test it
-        base = tmpdir
+
+    def make_mock_sync_env(self):
+        """
+        Create a mock environment for sync_dir() that is close to thing.
+        """
+        base = self.tmpdir
         source =  "etc"
         os.makedirs(os.path.join(base, source))
         target = "writable/"
         os.makedirs(os.path.join(base, target, source))
+        return base, source, target
 
+    def run_sync_dir(self, base, source, target):
+        """
+        Run the sync_dir script in isolation with the given inputs for
+        base, source, target.
+        """
+        subprocess.check_call(["sh", "-e", "runner.sh", base, source, target], cwd=self.tmpdir)
+
+    def test_sync_dir_trivial(self):
+        """Ensure trivial sync works"""
+        base, source, target = self.make_mock_sync_env()
         with open(os.path.join(base, source, "canary.txt"), "w"):
             pass
-        subprocess.check_call(["sh", "-e", "runner.sh", base, source, target], cwd=tmpdir)
-        
+
+        self.run_sync_dir(base, source, target)
         self.assertTrue(os.path.exists(os.path.join(base, target, "etc/canary.txt")))
+
+    def test_sync_dir_broken_symlink(self):
+        """Ensure sync with a (broken) symlink works"""
+        base, source, target = self.make_mock_sync_env()
+        os.symlink("invalid-symlink", os.path.join(base, source, "broken-symlink"))
+
+        self.run_sync_dir(base, source, target)
+        self.assertTrue(os.path.lexists(os.path.join(base, target, "etc/broken-symlink")))
+        

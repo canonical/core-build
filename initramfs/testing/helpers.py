@@ -1170,7 +1170,7 @@ def main() -> None:
     # Enable verbose logging if requested
     verbose = False
     for arg in sys.argv:
-        if arg == "-v":
+        if arg == "-v" or arg == "--verbose":
             verbose = True
     logging.basicConfig(level=logging.INFO if verbose else logging.WARNING)
     # Prepare a VM for testing

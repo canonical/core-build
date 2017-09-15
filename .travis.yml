@@ -20,7 +20,7 @@ install:
   - $CHROOT_RUN apt update
   - $CHROOT_RUN apt install -y shellcheck file build-essential devscripts
   - sudo modprobe kvm
-  - $CHROOT_RUN apt install -y qemu-system-x86 qemu-utils python3 snapd squashfs-tools
+  - $CHROOT_RUN apt install -y qemu-system-x86 qemu-utils python3 snapd squashfs-tools cpio
   - sudo cp -a initramfs config $CHROOT/build/
     # install all build deps defined in the control file
   - $CHROOT_RUN apt install -y $(grep -h Build-Depends {initramfs,config}/debian/control|sed 's/^.*://g;s/,//g;s/([^)]*)//g'| tr -d '\n'| sort | uniq)

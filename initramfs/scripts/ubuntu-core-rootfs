@@ -169,12 +169,12 @@ fsck_writable()
 mount_snaps()
 {
         # mount OS snap
-        mount "${writable_mnt}/system-data/var/lib/snapd/snaps/${snap_core}" "$rootmnt"
+        mount -o ro "${writable_mnt}/system-data/var/lib/snapd/snaps/${snap_core}" "$rootmnt"
 
         # now add a kernel bind mounts to it
         local kernel_mnt="/tmpmnt_kernel"
         mkdir -p "$kernel_mnt"
-        mount "${writable_mnt}/system-data/var/lib/snapd/snaps/${snap_kernel}" "$kernel_mnt"
+        mount -o ro "${writable_mnt}/system-data/var/lib/snapd/snaps/${snap_kernel}" "$kernel_mnt"
         for d in modules firmware; do
             if [ -d "${kernel_mnt}/$d" ]; then
                 mount -o bind "${kernel_mnt}/$d" "$rootmnt/lib/$d"

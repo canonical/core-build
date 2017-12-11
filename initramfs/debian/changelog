@@ -1,6 +1,12 @@
+initramfs-tools-ubuntu-core (0.7.43+ppa24) xenial; urgency=medium
+
+  * ubuntu-core-rootfs: mount os/kernel snaps RO
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Mon, 11 Dec 2017 09:32:08 +0100
+
 initramfs-tools-ubuntu-core (0.7.43+ppa23) xenial; urgency=medium
 
-  * buntu-core-rootfs: deal with (broken) symlink in sync_dirs
+  * ubuntu-core-rootfs: deal with (broken) symlink in sync_dirs
 
  -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 14 Sep 2017 16:45:25 +0200
 

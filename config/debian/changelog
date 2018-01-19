@@ -1,4 +1,4 @@
-ubuntu-core-config (0.6.40+ppa48) UNRELEASED; urgency=medium
+ubuntu-core-config (0.6.40+ppa48) xenial; urgency=medium
 
   * make /etc/update-motd.d writable for branding purposes
 

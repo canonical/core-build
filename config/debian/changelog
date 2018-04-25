@@ -1,3 +1,11 @@
+ubuntu-core-config (0.6.40+ppa49) xenial; urgency=medium
+
+  * Stop marking /snap "transitional", this will create the core
+    snaps "manifest.yaml" and "snapcraft.yaml" files in the
+    ubuntu-core system /snap directory otherwise.
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 25 Apr 2018 14:27:17 +0200
+
 ubuntu-core-config (0.6.40+ppa48) xenial; urgency=medium
 
   * make /etc/update-motd.d writable for branding purposes

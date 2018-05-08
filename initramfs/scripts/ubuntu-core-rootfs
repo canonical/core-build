@@ -263,15 +263,26 @@ mountroot()
 	boot_partition=$(findfs LABEL="system-boot" 2>/dev/null || :)
 
 	if [ -n "$boot_partition" ]; then
+                # deal with the system-boot partition
+                tmpboot_mnt="/tmpmnt_system-boot"
+                mkdir -p $tmpboot_mnt
+
+                # clean leftover FSCK files - it is very important
+                # to mount as msdos here, see:
+                # https://forum.snapcraft.io/t/5253
+                mount -o rw -t msdos "$boot_partition" "$tmpboot_mnt"
+                find "$tmpboot_mnt" -name "fsck*" -exec rm -f {} +
+                umount "$tmpboot_mnt"
+                # we now also need to ensure that the boot partition is
+                # clean (there may be leftover long filenames)
+                fsck.fat -v -a "$boot_partition"
+
 	        # determine bootloader type, we need to inspect the boot
                 # partition for this
 		grubdir="/boot/grub"
 		ubootdir="/boot/uboot"
 
-                tmpboot_mnt="/tmpmnt_system-boot"
-                mkdir -p $tmpboot_mnt
                 mount -o ro "$boot_partition" "$tmpboot_mnt"
-
 		# Since the boot partition is not required to actually boot
 		# the image, request the init system handle it (fsck+mount).
 		if [ -f "${tmpboot_mnt}/EFI/ubuntu/grub/grub.cfg" ]; then

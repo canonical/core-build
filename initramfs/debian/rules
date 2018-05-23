@@ -10,4 +10,5 @@ override_dh_auto_test:
 	    echo "Checking shell syntax of $$f"; \
 	    sh -n $$f; \
 	done
+	python3 -m unittest
 

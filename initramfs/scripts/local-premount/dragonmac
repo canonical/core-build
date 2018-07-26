@@ -20,6 +20,7 @@ esac
 if [ -e /proc/device-tree/model ]; then
     if grep -q "APQ 8016" /proc/device-tree/model; then
         if grep -q androidboot.serialno /proc/cmdline; then
+            # shellcheck disable=SC2013
             for i in $(cat /proc/cmdline); do
                 case "$i" in
                   androidboot.serialno=*)

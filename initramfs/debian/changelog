@@ -1,3 +1,11 @@
+initramfs-tools-ubuntu-core (0.7.43+ppa25) xenial; urgency=medium
+
+  * initramfs/scripts/local-bottom/fixrtc-mount:
+    - use /var/lib/snapd/snaps as possible date intput when the fixrtc
+      commandline option is used
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 26 Jul 2018 11:53:19 +0200
+
 initramfs-tools-ubuntu-core (0.7.43+ppa24) xenial; urgency=medium
 
   * ubuntu-core-rootfs: mount os/kernel snaps RO

@@ -39,7 +39,7 @@ if [ -n "$BROKEN_CLOCK" ]; then
         current=$(date +%s)
 
         # We start with date at the time of writing this
-        newdate=$(date -d "2017-06-09" +%s)
+        newdate=$(date -d "2017-07-26" +%s)
 
         if [ -d "$snapsfolder" ]; then
                 otherdate=$(stat -c %Y "$snapsfolder")

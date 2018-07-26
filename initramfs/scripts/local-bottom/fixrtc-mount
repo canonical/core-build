@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/sh
 # initramfs local-bottom script for fixrtc-mount
 
 PREREQ=""
@@ -53,3 +53,8 @@ if [ -n "$BROKEN_CLOCK" ]; then
                 echo "initrd: date set from $0 ($(date --utc))" > /dev/kmsg
         fi
 fi
+
+# This script is best-effort.  If we couldn't fudge the clock as desired,
+# just try to carry on boot anyway:
+# Boot will probably fail, but we won't have made the situation any worse
+exit 0

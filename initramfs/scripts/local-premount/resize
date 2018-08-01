@@ -21,6 +21,7 @@ LOGFILE="/run/initramfs/resize-writable.log"
 
 wait-for-root "LABEL=writable" "${ROOTDELAY:-180}" >/dev/null || true
 
+# shellcheck disable=SC2013
 for opt in $(cat /proc/cmdline); do
     case $opt in
         debug)
@@ -62,22 +63,24 @@ do_gpt()
     GUID="$(sgdisk -i "$PARTNUM" "$DISK"|grep unique| sed 's/^.*: //g')"
     FIRST="$(sgdisk -i "$PARTNUM" "$DISK"|grep ^First| sed 's/^.*: //g;s/ .*$//')"
 
-    echo "fixing backup GPT" >>$LOGFILE 2>&1
-    sgdisk --move-second-header "$DISK" >>$LOGFILE 2>&1
-
-    echo "Deleting partition $PARTNUM" >>$LOGFILE 2>&1
-    sgdisk -d "$PARTNUM" "$DISK" >>$LOGFILE 2>&1
-
-    echo "Creating partition $PARTNUM at $FIRST" >>$LOGFILE 2>&1
-    sgdisk -n "$PARTNUM":"$FIRST":0 "$DISK" >>$LOGFILE 2>&1
-
-    echo "Setting GUID of partition $PARTNUM to $GUID" >>$LOGFILE 2>&1
-    sgdisk -u "$PARTNUM":"$GUID" "$DISK" >>$LOGFILE 2>&1
-
-    echo "Setting name of $PARTNUM to writable" >>$LOGFILE 2>&1
-    sgdisk -c "$PARTNUM":writable "$DISK" >>$LOGFILE 2>&1
-
-    sgdisk -p "$DISK" >/run/initramfs/new-gpt-table.txt 2>/dev/null
+    {
+        echo "fixing backup GPT"
+        sgdisk --move-second-header "$DISK"
+        
+        echo "Deleting partition $PARTNUM"
+        sgdisk -d "$PARTNUM" "$DISK"
+        
+        echo "Creating partition $PARTNUM at $FIRST"
+        sgdisk -n "$PARTNUM":"$FIRST":0 "$DISK"
+        
+        echo "Setting GUID of partition $PARTNUM to $GUID"
+        sgdisk -u "$PARTNUM":"$GUID" "$DISK"
+        
+        echo "Setting name of $PARTNUM to writable"
+        sgdisk -c "$PARTNUM":writable "$DISK"
+        
+        sgdisk -p "$DISK" >/run/initramfs/new-gpt-table.txt 2>/dev/null
+    } >>$LOGFILE 2>&1
 }
 
 do_mbr()
@@ -119,9 +122,11 @@ if [ "$min_free_space" -lt "$free_space" ]; then
             ;;
     esac
     # make sure the partitions are ready for further use
-    udevadm settle >>$LOGFILE 2>&1
-    # check the filesystem before attempting re-size
-    e2fsck -fy "$writable_part" >>$LOGFILE 2>&1
-    # resize the filesystem to full size of the partition
-    resize2fs "$resizeopts" "$writable_part" >>$LOGFILE 2>&1
+    {
+        udevadm settle
+        # check the filesystem before attempting re-size
+        e2fsck -fy "$writable_part"
+        # resize the filesystem to full size of the partition
+        resize2fs "$resizeopts" "$writable_part"
+    } >>$LOGFILE 2>&1
 fi

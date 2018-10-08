@@ -17,6 +17,7 @@ install:
   - sudo mount --rbind /dev $CHROOT/dev
   - sudo mount --rbind /proc $CHROOT/proc
   - sudo mount --rbind /sys $CHROOT/sys
+  - sudo sed -i '/^deb/s/$/ universe/' $CHROOT/etc/apt/sources.list
   - $CHROOT_RUN apt update
   - $CHROOT_RUN apt install -y shellcheck file build-essential devscripts
   - sudo modprobe kvm

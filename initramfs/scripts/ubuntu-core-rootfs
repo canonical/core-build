@@ -46,7 +46,7 @@ handle_writable_paths()
 
 	[ -n "$writable_paths" ] || panic "need writeable paths"
 	[ -e "$writable_paths" ] || panic "writeable paths does not exist"
-	[ -n "fstab" ] || panic "need fstab"
+	[ -n "$fstab" ] || panic "need fstab"
 
 	cat "$writable_paths" | while read line; do
 		# tokenise

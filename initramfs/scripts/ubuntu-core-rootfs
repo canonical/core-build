@@ -116,7 +116,7 @@ handle_writable_paths()
                         # processed, as it will cause races.
                         case $1 in
                             /etc*)
-                                [ -d "${rootmnt}/writable/system-data/$1" ] || mkdir -p "${rootmnt}/writable/system-data/$1"
+                                [ -e "${rootmnt}/writable/system-data/$1" ] || mkdir -p "${rootmnt}/writable/system-data/$1"
                                 mount -o bind "${rootmnt}/writable/system-data/$1" "${rootmnt}/$1"
                                 ;;
                             *)

@@ -9,7 +9,7 @@ Vcs-Git: Vcs-Git: https://github.com/snapcore/core-build
 Package: initramfs-tools-ubuntu-core
 Architecture: all
 Depends: initramfs-tools, ubuntu-core-config, ${misc:Depends},
-  gnupg, xz-utils, realpath, coreutils, parted, gdisk, abootimg
+  parted, gdisk, abootimg
 Description: Tools for making a read-only Ubuntu Core image selectively writeable
  This package contains the scripts to make a read-only Ubuntu Core image
  selectively writeable. These scripts are run within the initramfs.

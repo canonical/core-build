@@ -1,3 +1,30 @@
+initramfs-tools-ubuntu-core (0.7.45+ppa2) bionic; urgency=medium
+
+  * resync with bionic again - this package can go unmodified into
+    ppa:snappy-dev/image for both xenial and bionic
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Mon, 08 Oct 2018 14:21:58 +0200
+
+initramfs-tools-ubuntu-core (0.7.45+ppa1) bionic; urgency=medium
+
+  * resync with bionic
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 06 Jun 2018 13:12:30 +0200
+
+initramfs-tools-ubuntu-core (0.7.45) bionic; urgency=medium
+
+  * Drop dependency on coreutils, it is a required package.
+  * Drop dependency on xz-utils, not used.
+  * Drop dependency on gnupg, not used.
+
+ -- Dimitri John Ledkov <xnox@ubuntu.com>  Thu, 01 Mar 2018 17:32:37 +0000
+
+initramfs-tools-ubuntu-core (0.7.44) bionic; urgency=medium
+
+  * Drop dependency on transitional realpath package.
+
+ -- Steve Langasek <steve.langasek@ubuntu.com>  Mon, 05 Feb 2018 17:50:10 -0800
+
 initramfs-tools-ubuntu-core (0.7.43+ppa26) xenial; urgency=medium
 
   * initramfs/scripts/ubuntu-core-rootfs:

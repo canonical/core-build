@@ -1,3 +1,13 @@
+initramfs-tools-ubuntu-core (0.7.43+ppa26) xenial; urgency=medium
+
+  * initramfs/scripts/ubuntu-core-rootfs:
+    - fix incorrect test for dir existance to file/dir existance
+  * initramfs/:
+    - run shellcheck on the shell scripts
+    - fix shell check issues
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Mon, 08 Oct 2018 14:14:19 +0200
+
 initramfs-tools-ubuntu-core (0.7.43+ppa25) xenial; urgency=medium
 
   * initramfs/scripts/local-bottom/fixrtc-mount:

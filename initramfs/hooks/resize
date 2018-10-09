@@ -17,6 +17,7 @@ case "$1" in
         ;;
 esac
 
+# shellcheck disable=SC1091
 . /usr/share/initramfs-tools/hook-functions
 
 copy_exec /sbin/parted /sbin

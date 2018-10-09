@@ -1,3 +1,9 @@
+initramfs-tools-ubuntu-core (0.7.45+ppa3) bionic; urgency=medium
+
+  * Fix bionic shellcheck issues
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 09 Oct 2018 11:08:31 +0200
+
 initramfs-tools-ubuntu-core (0.7.45+ppa2) bionic; urgency=medium
 
   * resync with bionic again - this package can go unmodified into

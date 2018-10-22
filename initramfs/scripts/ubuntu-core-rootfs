@@ -317,6 +317,16 @@ mountroot()
 	fi
 	mount -o bind "${rootmnt}/writable/system-data/etc/machine-id" "${rootmnt}/etc/machine-id"
 
+	# Mount the system-recovery partition, if it is found
+	recovery_partition=$(findfs LABEL="system-recovery" 2>/dev/null || :)
+
+	if [ -n "$recovery_partition" ]; then
+		# Mount the seed directory from the recovery partition (read-only)
+		seed_dir="${rootmnt}/writable/system-data/var/lib/snapd/seed"
+		mkdir -p "${seed_dir}"
+		mount -o ro "$recovery_partition/seed" "$seed_dir"
+	fi
+
 	# Apply customized content
 	for user in "${rootmnt}"/writable/user-data/*
 	do

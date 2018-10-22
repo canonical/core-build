@@ -57,3 +57,22 @@ do_root_mounting()
 	path=$(get_partition_from_label "$writable_label")
 	mount "$path" "$writable_mnt"
 }
+
+mount_recovery()
+{
+	# Mount the system-recovery partition, if it is found
+	recovery_partition=$(findfs LABEL="system-recovery" 2>/dev/null)
+	echo "Recovery partition: $recovery_partition" >/dev/kmsg || true
+
+	if [ -n "$recovery_partition" ]; then
+		echo "Found recovery partition: $recovery_partition" >/dev/kmsg || true
+		# Mount the seed directory from the recovery partition (read-only)
+		recovery="/recovery"
+		seed_dir="${writable_mnt}/system-data/var/lib/snapd/seed"
+		echo "Seed dir: $seed_dir" >/dev/kmsg || true
+		mkdir -p "${recovery}"
+		mkdir -p "${seed_dir}"
+		mount -o ro "$recovery_partition" "$recovery"
+		mount -o bind "$recovery/seed" "$seed_dir"
+	fi
+}

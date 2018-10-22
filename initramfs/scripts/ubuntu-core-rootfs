@@ -212,10 +212,10 @@ mountroot()
 
         # basic validation
         if [ -z "$snap_core" ]; then
-            panic "the requried kernel commandline snap_core is not set"
+            panic "the required kernel commandline snap_core is not set"
         fi
         if [ -z "$snap_kernel" ]; then
-            panic "the requried kernel commandline snap_kernel is not set"
+            panic "the required kernel commandline snap_kernel is not set"
         fi
 
         # always ensure writable is in a good state
@@ -226,9 +226,13 @@ mountroot()
 
         # mount the root fs
         do_root_mounting
+
+	# mount the recovery partition
+	mount_recovery
+
         # mount core and kernel snaps
         mount_snaps
-        
+
         # mount /run
 	echo "initrd: mounting /run" >/dev/kmsg || true
 	mount -o rw,nosuid,noexec,relatime,mode=755 -t tmpfs tmpfs "${rootmnt}/run"
@@ -316,16 +320,6 @@ mountroot()
 		cat /proc/sys/kernel/random/uuid|tr -d - >${rootmnt}/writable/system-data/etc/machine-id
 	fi
 	mount -o bind "${rootmnt}/writable/system-data/etc/machine-id" "${rootmnt}/etc/machine-id"
-
-	# Mount the system-recovery partition, if it is found
-	recovery_partition=$(findfs LABEL="system-recovery" 2>/dev/null || :)
-
-	if [ -n "$recovery_partition" ]; then
-		# Mount the seed directory from the recovery partition (read-only)
-		seed_dir="${rootmnt}/writable/system-data/var/lib/snapd/seed"
-		mkdir -p "${seed_dir}"
-		mount -o ro "$recovery_partition/seed" "$seed_dir"
-	fi
 
 	# Apply customized content
 	for user in "${rootmnt}"/writable/user-data/*

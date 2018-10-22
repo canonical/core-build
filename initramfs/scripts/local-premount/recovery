@@ -1,0 +1,87 @@
+#! /bin/sh -e
+# initramfs local-premount script for resizing writable
+
+PREREQ=""
+
+
+# Find the boot and recovery partitions
+find_partitions()
+{
+	boot_label="system-boot"
+	recovery_label="system-recovery"
+	boot_partition="$(findfs LABEL=$boot_label)"
+	recovery_partition="$(findfs LABEL=$recovery_label)"
+}
+
+# Format system-writable
+reset_writable()
+{
+	# Format system-writable
+	mkfs.ext4 /dev/mapper/writable -L "$writable_label"
+
+	# Mount the file system
+	mkdir -p "$writable_mnt"
+	mount /dev/mapper/writable "$writable_mnt"
+
+	mkdir -p "$writable_mnt/system-data/boot"
+	mkdir -p "$writable_mnt/system-data/var/lib/snapd/snaps"
+
+	umount "$writable_mnt"
+}
+
+restore_boot()
+{
+	# Mount the recovery partition
+	tmprecovery_mnt="/tmpmnt_system-recovery"
+	mkdir -p $tmprecovery_mnt
+	mount "$recovery_partition" "$tmprecovery_mnt"
+
+	# Restore /boot from the backup on the recovery partition
+	dd if="$tmprecovery_mnt/system-boot.img" of="$boot_partition"
+
+	# Unmount the file system
+	umount $tmprecovery_mnt
+}
+
+# Recover the system to the factory settings
+system_recovery()
+{
+	# Find the boot and recovery partitions
+	find_partitions
+
+	# Only progress if both partitions are found
+	[ -n "$boot_partition" ] || return 1
+	[ -n "$recovery_partition" ] || return 1
+
+	# Restore system-boot from the recovery partition
+	restore_boot
+
+	# Reset system-writable
+	reset_writable
+
+	# Reboot the system
+	sync
+	sleep 2
+	reboot -f
+}
+
+# Output pre-requisites
+prereqs()
+{
+        echo "$PREREQ"
+}
+
+case "$1" in
+    prereqs)
+        prereqs
+        exit 0
+        ;;
+esac
+
+echo "initrd: check for recovery mode" >/dev/kmsg || true
+
+# Check if we need to perform a factory-reset
+if grep -q reset=factory-reset /proc/cmdline; then
+    echo "initrd: initiating factory-reset" >/dev/kmsg || true
+    system_recovery
+fi

@@ -69,7 +69,6 @@ mount_recovery()
 		# Mount the seed directory from the recovery partition (read-only)
 		recovery="/recovery"
 		seed_dir="${writable_mnt}/system-data/var/lib/snapd/seed"
-		echo "Seed dir: $seed_dir" >/dev/kmsg || true
 		mkdir -p "${recovery}"
 		mkdir -p "${seed_dir}"
 		mount -o ro "$recovery_partition" "$recovery"

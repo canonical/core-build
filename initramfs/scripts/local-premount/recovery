@@ -16,6 +16,9 @@ find_partitions()
 # Format system-writable
 reset_writable()
 {
+	writable_label="writable"
+	writable_mnt="/tmpmnt_${writable_label}"
+
 	# Format system-writable
 	mkfs.ext4 /dev/mapper/writable -L "$writable_label"
 

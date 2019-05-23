@@ -143,7 +143,7 @@ class FIFO(Resource):
                     self.path, os.O_WRONLY | os.O_NONBLOCK | O_CLOEXEC)
             except OSError as exc:
                 if exc.errno == errno.ENXIO:
-                    asyncio.sleep(1)
+                    await asyncio.sleep(1)
 
         def proto_factory() -> asyncio.streams.FlowControlMixin:
             return asyncio.streams.FlowControlMixin()

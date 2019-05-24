@@ -1,0 +1,110 @@
+#! /bin/sh -e
+# initramfs local-premount script to install from recovery
+
+PREREQ=""
+
+# Output pre-requisites
+prereqs()
+{
+        echo "$PREREQ"
+}
+
+case "$1" in
+    prereqs)
+        prereqs
+        exit 0
+        ;;
+esac
+
+# Only run in install mode
+grep -wq "snap_mode=install" /proc/cmdline || exit 0
+
+
+LOGFILE="/run/initramfs/recreate.log"
+
+sys_recover_part="$(findfs LABEL=sys-recover || true)"
+system_boot_part="$(findfs LABEL=system-boot || true)"
+writable_part="$(findfs LABEL=writable || true)"
+
+syspath="$(dirname "$(realpath /sys/class/block/"$(basename "$sys_recover_part")")")"
+device="$(realpath /dev/block/"$(cat "$syspath"/dev)")"
+
+
+recreate_system_boot() {
+    echo "Recreate system-boot"
+    # TODO
+}
+
+# FIXME: determine writable part number
+# FIXME: add LUKS support
+# we're assuming that writable is in the same volume as sys-recover
+recreate_writable() {
+    echo "Recreate writable"
+    part_num=4
+    sgdisk -n $part_num:2306048:2920448 "$device"
+    mke2fs -t ext4 -L writable "${device}${part_num}"
+}
+
+populate_seed() {
+    echo "Recreate seed"
+    writable_part="$(findfs LABEL=writable)"
+    mkdir /sys-recover /writable /system-boot
+    mount -t vfat "$sys_recover_part" /sys-recover
+    mount -t vfat "$system_boot_part" /system-boot
+    mount -t ext4 "$writable_part" /writable
+    mkdir -p /writable/"$seed_path"
+    mkdir -p /writable/"$snaps_path"
+    cp -r "$recovery_path"/* /writable/"$seed_path"/
+    snap_core=$(basename $(echo "$recovery_path"/snaps/core18_*.snap|tail -1))
+    snap_kernel=$(basename $(echo "$recovery_path"/snaps/kernel*.snap|tail -1))
+    ln -s ../seed/snaps/"$snap_core" /writable/"$snaps_path"
+    ln -s ../seed/snaps/"$snap_kernel" /writable/"$snaps_path"
+}
+
+extract_kernel() {
+    echo "Extract kernel"
+    mkdir /kernel-snap
+    mount -t squashfs "/writable/$seed_path/snaps/$snap_kernel" /kernel-snap
+    cp /kernel-snap/kernel.img /system-boot/
+    cp /kernel-snap/initrd.img /system-boot/
+    umount /kernel-snap
+    umount /writable
+}
+
+update_grub() {
+    echo "Update grub"
+    system_boot_grubenv="/system-boot/EFI/ubuntu/grubenv"
+    sys_recover_grubenv="/sys-recover/EFI/ubuntu/grubenv"
+    mkdir -p $(dirname "$system_boot_grubenv")
+    grub-editenv "$system_boot_grubenv" create
+    grub-editenv "$system_boot_grubenv" set snap_core="$snap_core"
+    grub-editenv "$system_boot_grubenv" set snap_kernel="$snap_kernel"
+    grub-editenv "$sys_recover_grubenv" unset snap_mode
+    umount /sys-recover
+    umount /system-boot
+}
+
+
+if [ -z "$system_boot_part" ]; then
+    recreate_system_boot
+fi
+
+
+if [ -z "$writable_part" ]; then
+    recreate_writable
+fi
+
+# FIXME: select recovery bundle
+recovery="20190523-1142"
+
+recovery_path="/sys-recover/system/$recovery"
+seed_path="/system-data/var/lib/snapd/seed"
+snaps_path="/system-data/var/lib/snapd/snaps"
+populate_seed
+extract_kernel
+update_grub
+
+echo "Rebooting..."
+sync
+sleep 2
+reboot

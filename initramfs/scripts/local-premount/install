@@ -41,7 +41,7 @@ recreate_system_boot() {
 recreate_writable() {
     echo "Recreate writable"
     part_num=4
-    sgdisk -n $part_num:2306048:2920448 "$device"
+    sgdisk -n $part_num:2306048:3920448 "$device"
     mke2fs -t ext4 -L writable "${device}${part_num}"
 }
 
@@ -54,6 +54,7 @@ populate_seed() {
     mount -t ext4 "$writable_part" /writable
     mkdir -p /writable/"$seed_path"
     mkdir -p /writable/"$snaps_path"
+    mkdir -p /writable/system-data/boot
     cp -r "$recovery_path"/* /writable/"$seed_path"/
     snap_core=$(basename $(echo "$recovery_path"/snaps/core18_*.snap|tail -1))
     snap_kernel=$(basename $(echo "$recovery_path"/snaps/kernel*.snap|tail -1))

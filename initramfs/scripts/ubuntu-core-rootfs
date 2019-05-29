@@ -207,8 +207,17 @@ mountroot()
 		snap_kernel=*)
 			snap_kernel="${x#*=}"
 			;;
+                snap_mode=*)
+			snap_mode="${x#*=}"
+			;;
 		esac
 	done
+
+        if [ "$snap_mode" = "install" ]; then
+            # FIXME
+            snap_core="core18_x1.snap"
+            snap_kernel="pc-kernel_x1.snap"
+        fi
 
         # basic validation
         if [ -z "$snap_core" ]; then
@@ -220,15 +229,21 @@ mountroot()
 
         # always ensure writable is in a good state
         writable_label="writable"
-        writable_mnt="/tmpmnt_${writable_label}"
-	mkdir -p "$writable_mnt"
-        fsck_writable "$writable_label" "$writable_mnt"
 
-        # mount the root fs
-        do_root_mounting
+        if [ "$snap_mode" = "install" ]; then
+            writable_mnt="/writable"
+        else
+            writable_mnt="/tmpmnt_${writable_label}"
+	    mkdir -p "$writable_mnt"
+            fsck_writable "$writable_label" "$writable_mnt"
+
+            # mount the root fs
+            do_root_mounting
+        fi
+
         # mount core and kernel snaps
         mount_snaps
-        
+
         # mount /run
 	echo "initrd: mounting /run" >/dev/kmsg || true
 	mount -o rw,nosuid,noexec,relatime,mode=755 -t tmpfs tmpfs "${rootmnt}/run"
@@ -252,7 +267,7 @@ mountroot()
                 #        let systemd do a "remount,rw" for us. unfortunately
                 #        this is not supported by systemd so we need to do
                 #        the RW mount and fsck dance etc here :/
-                echo "LABEL=writable /writable auto defaults 0 0" >> "$fstab"
+                #echo "LABEL=writable /writable auto defaults 0 0" >> "$fstab"
 		handle_writable_paths "$writable_paths" "$fstab"
 	fi
 

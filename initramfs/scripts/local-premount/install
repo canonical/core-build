@@ -33,44 +33,30 @@ done
 
 sys_recover_part="$(findfs LABEL=sys-recover || true)"
 system_boot_part="$(findfs LABEL=system-boot || true)"
-writable_part="$(findfs LABEL=writable || true)"
 
 syspath="$(dirname "$(realpath /sys/class/block/"$(basename "$sys_recover_part")")")"
 device="$(realpath /dev/block/"$(cat "$syspath"/dev)")"
 
 
-recreate_system_boot() {
-    echo "Recreate system-boot"
-    # TODO
-}
-
-# FIXME: determine writable part number
-# FIXME: add LUKS support
-# we're assuming that writable is in the same volume as sys-recover
-recreate_writable() {
-    echo "Recreate writable"
-    part_num=4
-    sgdisk -n $part_num:2306048:3920448 "$device"
-    mke2fs -t ext4 -L writable "${device}${part_num}"
-}
-
-populate_seed() {
-    echo "Recreate seed"
-    writable_part="$(findfs LABEL=writable)"
+create_writable() {
+    echo "Create writable"
     mkdir /sys-recover /writable /system-boot
     mount -t vfat "$sys_recover_part" /sys-recover
     mount -t vfat "$system_boot_part" /system-boot
-    mount -t ext4 "$writable_part" /writable
+    mount -t tmpfs tmpfs /writable
     mkdir -p /writable/"$seed_path"
     mkdir -p /writable/"$snaps_path"
     mkdir -p /writable/system-data/boot
+    echo "copy recovery"
     cp -r "$recovery_path"/* /writable/"$seed_path"/
+    echo "create symlinks"
     snap_core=$(basename $(echo "$recovery_path"/snaps/core18_*.snap|tail -1))
     # fugly - hardcoded kernel name :( we need this so that the grub-bootenv
     # kernel name matches the kernel that is later seeded
     snap_kernel=$(basename $(echo "$recovery_path"/snaps/pc-kernel_*.snap|tail -1))
     ln -s ../seed/snaps/"$snap_core" /writable/"$snaps_path"
     ln -s ../seed/snaps/"$snap_kernel" /writable/"$snaps_path"
+    echo "done"
 }
 
 extract_kernel() {
@@ -88,32 +74,20 @@ update_grub() {
     system_boot_grubenv="/system-boot/EFI/ubuntu/grubenv"
     sys_recover_grubenv="/sys-recover/EFI/ubuntu/grubenv"
     mkdir -p $(dirname "$system_boot_grubenv")
-    grub-editenv "$system_boot_grubenv" create
-    grub-editenv "$system_boot_grubenv" set snap_core="$snap_core"
-    grub-editenv "$system_boot_grubenv" set snap_kernel="$snap_kernel"
-    grub-editenv "$sys_recover_grubenv" unset snap_mode
+
+    # hack: keep snapd happy
+    grub-editenv "/system-boot/grubenv" create
+
     umount /sys-recover
     umount /system-boot
 }
 
 
-if [ -z "$system_boot_part" ]; then
-    recreate_system_boot
-fi
-
-
-if [ -z "$writable_part" ]; then
-    recreate_writable
-fi
-
 recovery_path="/sys-recover/system/$recovery"
 seed_path="/system-data/var/lib/snapd/seed"
 snaps_path="/system-data/var/lib/snapd/snaps"
-populate_seed
-extract_kernel
-update_grub
 
-echo "Rebooting..."
+create_writable
+update_grub
 sync
-sleep 2
-reboot
+

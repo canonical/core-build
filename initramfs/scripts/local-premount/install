@@ -16,11 +16,20 @@ case "$1" in
         ;;
 esac
 
+
 # Only run in install mode
 grep -wq "snap_mode=install" /proc/cmdline || exit 0
 
-
 LOGFILE="/run/initramfs/recreate.log"
+
+for x in $(cat /proc/cmdline); do
+    case $x in
+        snap_recovery_system=*)
+            recovery=${x#*=}
+            echo "System recovery set to $recovery"
+            ;;
+    esac
+done
 
 sys_recover_part="$(findfs LABEL=sys-recover || true)"
 system_boot_part="$(findfs LABEL=system-boot || true)"
@@ -94,9 +103,6 @@ fi
 if [ -z "$writable_part" ]; then
     recreate_writable
 fi
-
-# FIXME: select recovery bundle
-recovery="20190523-1142"
 
 recovery_path="/sys-recover/system/$recovery"
 seed_path="/system-data/var/lib/snapd/seed"

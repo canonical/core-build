@@ -57,7 +57,9 @@ populate_seed() {
     mkdir -p /writable/system-data/boot
     cp -r "$recovery_path"/* /writable/"$seed_path"/
     snap_core=$(basename $(echo "$recovery_path"/snaps/core18_*.snap|tail -1))
-    snap_kernel=$(basename $(echo "$recovery_path"/snaps/kernel*.snap|tail -1))
+    # fugly - hardcoded kernel name :( we need this so that the grub-bootenv
+    # kernel name matches the kernel that is later seeded
+    snap_kernel=$(basename $(echo "$recovery_path"/snaps/pc-kernel_*.snap|tail -1))
     ln -s ../seed/snaps/"$snap_core" /writable/"$snaps_path"
     ln -s ../seed/snaps/"$snap_kernel" /writable/"$snaps_path"
 }

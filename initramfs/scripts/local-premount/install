@@ -75,8 +75,10 @@ update_grub() {
     sys_recover_grubenv="/sys-recover/EFI/ubuntu/grubenv"
     mkdir -p $(dirname "$system_boot_grubenv")
 
-    # hack: keep snapd happy
-    grub-editenv "/system-boot/grubenv" create
+    # snapd needs this (will be bind-mounted on /boot/grub later)
+    grub-editenv "$system_boot_grubenv" create
+    grub-editenv "$system_boot_grubenv" set snap_core="core18_x1.snap"
+    grub-editenv "$system_boot_grubenv" set snap_kernel="pc-kernel_x1.snap"
 
     umount /sys-recover
     umount /system-boot

@@ -79,6 +79,7 @@ update_grub() {
     grub-editenv "$system_boot_grubenv" create
     grub-editenv "$system_boot_grubenv" set snap_core="core18_x1.snap"
     grub-editenv "$system_boot_grubenv" set snap_kernel="pc-kernel_x1.snap"
+    grub-editenv "$system_boot_grubenv" set snap_mode="install"
 
     umount /sys-recover
     umount /system-boot

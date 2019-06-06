@@ -17,19 +17,25 @@ case "$1" in
 esac
 
 
-# Only run in install mode
-grep -wq "snap_mode=install" /proc/cmdline || exit 0
-
-LOGFILE="/run/initramfs/recreate.log"
-
 for x in $(cat /proc/cmdline); do
     case $x in
+        snap_mode=*)
+            snap_mode=${x#*=}
+            ;;
         snap_recovery_system=*)
             recovery=${x#*=}
             echo "System recovery set to $recovery"
             ;;
     esac
 done
+
+
+# Only prepare writable on tmpfs in these three modes
+
+if [ "$snap_mode" != "install" ] && [ "$snap_mode" != "recover" ] && [ "$snap_mode" != "recover_reboot" ]; then
+    exit 0
+fi
+
 
 sys_recover_part="$(findfs LABEL=sys-recover || true)"
 system_boot_part="$(findfs LABEL=system-boot || true)"

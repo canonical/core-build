@@ -53,8 +53,8 @@ create_writable() {
     mkdir -p /writable/"$seed_path"
     mkdir -p /writable/"$snaps_path"
     mkdir -p /writable/system-data/boot
-    echo "copy recovery"
-    cp -r "$recovery_path"/* /writable/"$seed_path"/
+    echo "bind mount recovery"
+    mount -o bind "$recovery_path" /writable/"$seed_path"
     echo "create symlinks"
     snap_core=$(basename $(echo "$recovery_path"/snaps/core18_*.snap|tail -1))
     # fugly - hardcoded kernel name :( we need this so that the grub-bootenv

@@ -44,7 +44,7 @@ syspath="$(dirname "$(realpath /sys/class/block/"$(basename "$sys_recover_part")
 device="$(realpath /dev/block/"$(cat "$syspath"/dev)")"
 
 
-create_writable() {
+create_writable_on_tmpfs() {
     echo "Create writable"
     mkdir /sys-recover /writable /system-boot
     mount -t vfat "$sys_recover_part" /sys-recover
@@ -95,7 +95,7 @@ recovery_path="/sys-recover/system/$recovery"
 seed_path="/system-data/var/lib/snapd/seed"
 snaps_path="/system-data/var/lib/snapd/snaps"
 
-create_writable
+create_writable_on_tmpfs
 update_grub
 sync
 

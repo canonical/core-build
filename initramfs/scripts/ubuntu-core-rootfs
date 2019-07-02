@@ -317,19 +317,6 @@ mountroot()
 	fi
 	mount -o bind "${rootmnt}/writable/system-data/etc/machine-id" "${rootmnt}/etc/machine-id"
 
-	# Apply customized content
-	for user in "${rootmnt}"/writable/user-data/*
-	do
-		if [ -d "${rootmnt}/custom/home" ] && [ ! -e "$user/.customized" ]; then
-			echo "initrd: copying custom content tp " >/dev/kmsg || true
-			cp -Rap "${rootmnt}"/custom/home/* "$user/"
-			cp -Rap "${rootmnt}"/custom/home/.[a-zA-Z0-9]* "$user/"
-			touch "$user/.customized"
-			dstown=$(stat -c "%u:%g" "$user")
-			chown -R "$dstown" "$user/"
-		fi
-	done
-
 	[ "$quiet" != "y" ] && log_begin_msg "Running /scripts/local-bottom"
 	run_scripts /scripts/local-bottom
 	[ "$quiet" != "y" ] && log_end_msg

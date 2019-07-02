@@ -215,7 +215,7 @@ mountroot()
 
         if [ "$snap_mode" = "install" ] || [ "$snap_mode" = "recover" ] || [ "$snap_mode" = "recover_reboot" ]; then
             # FIXME: these should come from the kernel cmdline
-            snap_core="core18_x1.snap"
+            snap_core="core20_x1.snap"
             snap_kernel="pc-kernel_x1.snap"
         fi
 

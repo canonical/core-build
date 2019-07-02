@@ -56,7 +56,7 @@ create_writable() {
     echo "bind mount recovery"
     mount -o bind "$recovery_path" /writable/"$seed_path"
     echo "create symlinks"
-    snap_core=$(basename $(echo "$recovery_path"/snaps/core18_*.snap|tail -1))
+    snap_core=$(basename $(echo "$recovery_path"/snaps/core20_*.snap|tail -1))
     # fugly - hardcoded kernel name :( we need this so that the grub-bootenv
     # kernel name matches the kernel that is later seeded
     snap_kernel=$(basename $(echo "$recovery_path"/snaps/pc-kernel_*.snap|tail -1))
@@ -83,7 +83,7 @@ update_grub() {
 
     # snapd needs this (will be bind-mounted on /boot/grub later)
     grub-editenv "$system_boot_grubenv" create
-    grub-editenv "$system_boot_grubenv" set snap_core="core18_x1.snap"
+    grub-editenv "$system_boot_grubenv" set snap_core="core20_x1.snap"
     grub-editenv "$system_boot_grubenv" set snap_kernel="pc-kernel_x1.snap"
 
     umount /sys-recover

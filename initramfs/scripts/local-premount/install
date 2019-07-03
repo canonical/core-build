@@ -55,24 +55,18 @@ create_writable_on_tmpfs() {
     mkdir -p /writable/system-data/boot
     echo "bind mount recovery"
     mount -o bind "$recovery_path" /writable/"$seed_path"
+    echo "bind mount snap direcotry"
+    mkdir /writable/"$seed_path"/snaps
+    mount -o bind "$recovery_root"/snaps /writable/"$seed_path"/snaps
+    
     echo "create symlinks"
-    snap_core=$(basename $(echo "$recovery_path"/snaps/core20_*.snap|tail -1))
+    snap_core=$(basename $(echo "$recovery_root"/snaps/core20_*.snap|tail -1))
     # fugly - hardcoded kernel name :( we need this so that the grub-bootenv
     # kernel name matches the kernel that is later seeded
-    snap_kernel=$(basename $(echo "$recovery_path"/snaps/pc-kernel_*.snap|tail -1))
+    snap_kernel=$(basename $(echo "$recovery_root"/snaps/pc-kernel_*.snap|tail -1))
     ln -s ../seed/snaps/"$snap_core" /writable/"$snaps_path"
     ln -s ../seed/snaps/"$snap_kernel" /writable/"$snaps_path"
     echo "done"
-}
-
-extract_kernel() {
-    echo "Extract kernel"
-    mkdir /kernel-snap
-    mount -t squashfs "/writable/$seed_path/snaps/$snap_kernel" /kernel-snap
-    cp /kernel-snap/kernel.img /system-boot/
-    cp /kernel-snap/initrd.img /system-boot/
-    umount /kernel-snap
-    umount /writable
 }
 
 update_grub() {
@@ -91,11 +85,15 @@ update_grub() {
 }
 
 
-recovery_path="/sys-recover/system/$recovery"
+recovery_root="/sys-recover/"
+recovery_path="$recovery_root/systems/$recovery"
 seed_path="/system-data/var/lib/snapd/seed"
 snaps_path="/system-data/var/lib/snapd/snaps"
 
 create_writable_on_tmpfs
 update_grub
+
+umount /writable
+
 sync
 

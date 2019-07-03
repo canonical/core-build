@@ -273,6 +273,7 @@ mountroot()
                 # ensure the right recovery system is available
                 # (must be added *last*)
                 echo "/writable/system-data/var/lib/snapd/seed" "/var/lib/snapd/seed non bind 0 0" >> "$fstab"
+                echo "/writable/system-data/var/lib/snapd/seed/snaps" "/var/lib/snapd/seed/snaps non bind 0 0" >> "$fstab"
 	fi
 
         # IMPORTANT: ensure we synced everything back to disk

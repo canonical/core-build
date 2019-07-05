@@ -270,7 +270,7 @@ mountroot()
                 #echo "LABEL=writable /writable auto defaults 0 0" >> "$fstab"
 		handle_writable_paths "$writable_paths" "$fstab"
 
-                # ensure the right recovery system is available
+                # ensure the right recover system is available
                 # (must be added *last*)
                 echo "/writable/system-data/var/lib/snapd/seed" "/var/lib/snapd/seed non bind 0 0" >> "$fstab"
                 echo "/writable/system-data/var/lib/snapd/seed/snaps" "/var/lib/snapd/seed/snaps non bind 0 0" >> "$fstab"
@@ -288,7 +288,7 @@ mountroot()
 		grubdir="/boot/grub"
 		ubootdir="/boot/uboot"
 
-                tmpboot_mnt="/tmpmnt_system-boot"
+                tmpboot_mnt="/tmpmnt_ubuntu-boot"
                 mkdir -p $tmpboot_mnt
                 mount -o ro "$boot_partition" "$tmpboot_mnt"
 

@@ -37,8 +37,8 @@ if [ "$snap_mode" != "install" ] && [ "$snap_mode" != "recover" ] && [ "$snap_mo
 fi
 
 
-sys_recover_part="$(findfs LABEL=sys-recover || true)"
-system_boot_part="$(findfs LABEL=system-boot || true)"
+sys_recover_part="$(findfs LABEL=ubuntu-seed || true)"
+system_boot_part="$(findfs LABEL=ubuntu-boot || true)"
 
 syspath="$(dirname "$(realpath /sys/class/block/"$(basename "$sys_recover_part")")")"
 device="$(realpath /dev/block/"$(cat "$syspath"/dev)")"

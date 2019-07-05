@@ -23,7 +23,7 @@ grep -wq "snap_mode=install" /proc/cmdline && exit 0
 TMPFILE="/run/initramfs/old-table.txt"
 LOGFILE="/run/initramfs/resize-writable.log"
 
-wait-for-root "LABEL=writable" "${ROOTDELAY:-180}" >/dev/null || true
+wait-for-root "LABEL=ubuntu-data" "${ROOTDELAY:-180}" >/dev/null || true
 
 # shellcheck disable=SC2013
 for opt in $(cat /proc/cmdline); do
@@ -34,7 +34,7 @@ for opt in $(cat /proc/cmdline); do
     esac
 done
 
-writable_part="$(findfs LABEL=writable)"
+writable_part="$(findfs LABEL=ubuntu-data)"
 
 syspath="$(dirname "$(realpath /sys/class/block/"$(basename "$writable_part")")")"
 device="$(realpath /dev/block/"$(cat "$syspath"/dev)")"
@@ -63,7 +63,7 @@ do_gpt()
 {
     DISK=$1
 
-    PARTNUM="$(sgdisk -p "$DISK"|grep writable|sed -r 's/^([^ ]*[ ]*){1}([^ ]*).*/\2/')"
+    PARTNUM="$(sgdisk -p "$DISK"|grep ubuntu-data|sed -r 's/^([^ ]*[ ]*){1}([^ ]*).*/\2/')"
     GUID="$(sgdisk -i "$PARTNUM" "$DISK"|grep unique| sed 's/^.*: //g')"
     FIRST="$(sgdisk -i "$PARTNUM" "$DISK"|grep ^First| sed 's/^.*: //g;s/ .*$//')"
 
@@ -80,8 +80,8 @@ do_gpt()
         echo "Setting GUID of partition $PARTNUM to $GUID"
         sgdisk -u "$PARTNUM":"$GUID" "$DISK"
         
-        echo "Setting name of $PARTNUM to writable"
-        sgdisk -c "$PARTNUM":writable "$DISK"
+        echo "Setting name of $PARTNUM to ubuntu-data"
+        sgdisk -c "$PARTNUM":ubuntu-data "$DISK"
         
         sgdisk -p "$DISK" >/run/initramfs/new-gpt-table.txt 2>/dev/null
     } >>$LOGFILE 2>&1

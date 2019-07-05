@@ -228,7 +228,7 @@ mountroot()
         fi
 
         # always ensure writable is in a good state
-        writable_label="writable"
+        writable_label="ubuntu-data"
 
         if [ "$snap_mode" = "install" ] || [ "$snap_mode" = "recover" ] || [ "$snap_mode" = "recover_reboot" ]; then
             writable_mnt="/writable"
@@ -280,7 +280,7 @@ mountroot()
         sync
 
 	# Request bootloader partition be mounted
-	boot_partition=$(findfs LABEL="system-boot" 2>/dev/null || :)
+	boot_partition=$(findfs LABEL="ubuntu-boot" 2>/dev/null || :)
 
 	if [ -n "$boot_partition" ]; then
 	        # determine bootloader type, we need to inspect the boot

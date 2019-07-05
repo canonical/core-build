@@ -245,14 +245,14 @@ mountroot()
         fi
 
 	# Request bootloader partition be mounted
-	boot_partition=$(findfs LABEL="system-boot" 2>/dev/null || :)
+	boot_partition=$(findfs LABEL="ubuntu-boot" 2>/dev/null || :)
 
         if [ "$snap_mode" != "install" ]; then
             open_data_partition
         fi
 
         # always ensure writable is in a good state
-        writable_label="writable"
+        writable_label="ubuntu-data"
 
         if [ "$snap_mode" = "install" ] || [ "$snap_mode" = "recover" ] || [ "$snap_mode" = "recover_reboot" ]; then
             writable_mnt="/writable"
@@ -294,7 +294,7 @@ mountroot()
                 #echo "LABEL=writable /writable auto defaults 0 0" >> "$fstab"
 		handle_writable_paths "$writable_paths" "$fstab"
 
-                # ensure the right recovery system is available
+                # ensure the right recover system is available
                 # (must be added *last*)
                 echo "/writable/system-data/var/lib/snapd/seed" "/var/lib/snapd/seed non bind 0 0" >> "$fstab"
                 echo "/writable/system-data/var/lib/snapd/seed/snaps" "/var/lib/snapd/seed/snaps non bind 0 0" >> "$fstab"
@@ -309,7 +309,7 @@ mountroot()
 		grubdir="/boot/grub"
 		ubootdir="/boot/uboot"
 
-                tmpboot_mnt="/tmpmnt_system-boot"
+                tmpboot_mnt="/tmpmnt_ubuntu-boot"
                 mkdir -p $tmpboot_mnt
                 mount -o ro "$boot_partition" "$tmpboot_mnt"
 

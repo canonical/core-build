@@ -19,6 +19,10 @@ esac
 # Don't run in install mode
 grep -wq "snap_mode=install" /proc/cmdline && exit 0
 
+# FIXME: temporarily disable writable resize
+echo "not resizing"
+sleep 2
+exit 0
 
 TMPFILE="/run/initramfs/old-table.txt"
 LOGFILE="/run/initramfs/resize-writable.log"

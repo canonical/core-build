@@ -186,6 +186,23 @@ mount_snaps()
         umount "$kernel_mnt"
 }
 
+open_data_partition()
+{
+        modprobe dm-crypt
+        modprobe aes-x86_64
+        modprobe cryptd
+        modprobe crypto_simd
+        modprobe glue_helper
+        modprobe af_alg
+        modprobe algif_skcipher
+        tmpboot_mnt="/tmpmnt_system-boot"
+        mkdir -p $tmpboot_mnt
+        mount -o ro "$boot_partition" "$tmpboot_mnt"
+        LD_PRELOAD=/lib/no-udev.so cryptsetup --type luks2 --key-file "$tmpboot_mnt/keyfile" --pbkdf-memory 100000 open /dev/sda4 ubuntu-data
+        umount "$tmpboot_mnt"
+        ln -s ../dm-0 /dev/mapper/ubuntu-data
+}
+
 #---------------------------------------------------------------------
 # XXX: Entry point - called by the initramfs "/init" script.
 #---------------------------------------------------------------------
@@ -225,6 +242,13 @@ mountroot()
         fi
         if [ -z "$snap_kernel" ]; then
             panic "the requried kernel commandline snap_kernel is not set"
+        fi
+
+	# Request bootloader partition be mounted
+	boot_partition=$(findfs LABEL="system-boot" 2>/dev/null || :)
+
+        if [ "$snap_mode" != "install" ]; then
+            open_data_partition
         fi
 
         # always ensure writable is in a good state
@@ -278,9 +302,6 @@ mountroot()
 
         # IMPORTANT: ensure we synced everything back to disk
         sync
-
-	# Request bootloader partition be mounted
-	boot_partition=$(findfs LABEL="system-boot" 2>/dev/null || :)
 
 	if [ -n "$boot_partition" ]; then
 	        # determine bootloader type, we need to inspect the boot

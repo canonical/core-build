@@ -13,12 +13,6 @@ get_partition_from_label()
 {
 	local label="$1"
 
-        # FIXME
-        if [ "$label" = "writable" ]; then
-            echo /dev/mapper/ubuntu-data
-            return
-        fi
-
 	[ -n "$label" ] || panic "need FS label"
 
 	# Make sure the device has been created by udev before looking for it
@@ -60,6 +54,8 @@ do_root_mounting()
 	fi
 
 	# mount writable rw
-	path=$(get_partition_from_label "$writable_label")
+	#path=$(get_partition_from_label "$writable_label")
+	# FIXME: we're handling only the encrypted data case
+	path=/dev/mapper/ubuntu-data
 	mount "$path" "$writable_mnt"
 }

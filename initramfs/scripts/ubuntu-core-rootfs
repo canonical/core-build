@@ -188,6 +188,8 @@ mount_snaps()
 
 open_data_partition()
 {
+        # don't remove this sleep
+        sleep 1
         modprobe dm-crypt
         modprobe aes-x86_64
         modprobe cryptd

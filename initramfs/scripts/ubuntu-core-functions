@@ -15,9 +15,9 @@ get_partition_from_label()
 
 	[ -n "$label" ] || panic "need FS label"
 
-	# spike: device node is predictable if ubuntu-data is encrypted. Also
+	# FIXME: we're handling only the encrypted data case.
+	# The device node is predictable if ubuntu-data is encrypted. Also
 	# wait-for-root fails in this case, so use a shortcut here.
-        sleep 5
 	if [ "$label" = "ubuntu-data" ]; then
 		echo "/dev/mapper/ubuntu-data"
 		return

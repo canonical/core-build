@@ -1,5 +1,5 @@
 #! /bin/sh -e
-# initramfs local-premount script for resizing writable
+# initramfs local-premount script for resizing ubuntu-data
 
 PREREQ=""
 
@@ -16,10 +16,18 @@ case "$1" in
         ;;
 esac
 
-TMPFILE="/run/initramfs/old-table.txt"
-LOGFILE="/run/initramfs/resize-writable.log"
+# Don't run in install mode
+grep -wq "snap_mode=install" /proc/cmdline && exit 0
 
-wait-for-root "LABEL=writable" "${ROOTDELAY:-180}" >/dev/null || true
+# FIXME: temporarily disable writable resize
+echo "not resizing"
+sleep 2
+exit 0
+
+TMPFILE="/run/initramfs/old-table.txt"
+LOGFILE="/run/initramfs/resize-ubuntu-data.log"
+
+wait-for-root "LABEL=ubuntu-data" "${ROOTDELAY:-180}" >/dev/null || true
 
 # shellcheck disable=SC2013
 for opt in $(cat /proc/cmdline); do
@@ -30,11 +38,11 @@ for opt in $(cat /proc/cmdline); do
     esac
 done
 
-writable_part="$(findfs LABEL=writable)"
+ubuntu_data_part="$(findfs LABEL=ubuntu-data)"
 
-syspath="$(dirname "$(realpath /sys/class/block/"$(basename "$writable_part")")")"
+syspath="$(dirname "$(realpath /sys/class/block/"$(basename "$ubuntu_data_part")")")"
 device="$(realpath /dev/block/"$(cat "$syspath"/dev)")"
-partition=$(cat "$syspath"/"$(basename "$writable_part")"/partition)
+partition=$(cat "$syspath"/"$(basename "$ubuntu_data_part")"/partition)
 
 device_size="$(($(cat "$syspath"/size)/2))"
 sum_size="$(($(grep "$(basename "$device")[a-z0-9]" /proc/partitions|\
@@ -59,7 +67,7 @@ do_gpt()
 {
     DISK=$1
 
-    PARTNUM="$(sgdisk -p "$DISK"|grep writable|sed -r 's/^([^ ]*[ ]*){1}([^ ]*).*/\2/')"
+    PARTNUM="$(sgdisk -p "$DISK"|grep ubuntu-data|sed -r 's/^([^ ]*[ ]*){1}([^ ]*).*/\2/')"
     GUID="$(sgdisk -i "$PARTNUM" "$DISK"|grep unique| sed 's/^.*: //g')"
     FIRST="$(sgdisk -i "$PARTNUM" "$DISK"|grep ^First| sed 's/^.*: //g;s/ .*$//')"
 
@@ -76,8 +84,8 @@ do_gpt()
         echo "Setting GUID of partition $PARTNUM to $GUID"
         sgdisk -u "$PARTNUM":"$GUID" "$DISK"
         
-        echo "Setting name of $PARTNUM to writable"
-        sgdisk -c "$PARTNUM":writable "$DISK"
+        echo "Setting name of $PARTNUM to ubuntu-data"
+        sgdisk -c "$PARTNUM":ubuntu-data "$DISK"
         
         sgdisk -p "$DISK" >/run/initramfs/new-gpt-table.txt 2>/dev/null
     } >>$LOGFILE 2>&1
@@ -100,7 +108,7 @@ min_free_space=$((device_size/10))
 resizeopts="-p"
 
 if [ "$min_free_space" -lt "$free_space" ]; then
-    echo "initrd: found more than 10% free space on disk, resizing ${writable_part}" >/dev/kmsg || true
+    echo "initrd: found more than 10% free space on disk, resizing ${ubuntu_data_part}" >/dev/kmsg || true
     echo "initrd: partition to full disk size, see ${LOGFILE} for details" >/dev/kmsg || true
     # back up the original partition table for later use or debugging
     parted -ms "$device" unit B print >$TMPFILE 2>/dev/null
@@ -125,8 +133,8 @@ if [ "$min_free_space" -lt "$free_space" ]; then
     {
         udevadm settle
         # check the filesystem before attempting re-size
-        e2fsck -fy "$writable_part"
+        e2fsck -fy "$ubuntu_data_part"
         # resize the filesystem to full size of the partition
-        resize2fs "$resizeopts" "$writable_part"
+        resize2fs "$resizeopts" "$ubuntu_data_part"
     } >>$LOGFILE 2>&1
 fi

@@ -31,7 +31,7 @@ do_root_mounting()
 	root="LABEL=$writable_label"
 
 	# Make sure the device has been created by udev before we try to mount
-	wait-for-root "$root" "${ROOTDELAY:-180}" || panic "unable to find root partition '$root'"
+	#wait-for-root "$root" "${ROOTDELAY:-180}" || panic "unable to find root partition '$root'"
 
 	# FIXME: This is never false since we set $root above
 	[ -n "$root" ] || panic "no root partition specified"
@@ -54,6 +54,8 @@ do_root_mounting()
 	fi
 
 	# mount writable rw
-	path=$(get_partition_from_label "$writable_label")
+	#path=$(get_partition_from_label "$writable_label")
+	# FIXME: we're handling only the encrypted data case
+	path=/dev/mapper/ubuntu-data
 	mount "$path" "$writable_mnt"
 }

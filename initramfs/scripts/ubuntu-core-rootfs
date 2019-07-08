@@ -186,6 +186,25 @@ mount_snaps()
         umount "$kernel_mnt"
 }
 
+open_data_partition()
+{
+        # don't remove this sleep
+        sleep 1
+        modprobe dm-crypt
+        modprobe aes-x86_64
+        modprobe cryptd
+        modprobe crypto_simd
+        modprobe glue_helper
+        modprobe af_alg
+        modprobe algif_skcipher
+        tmpboot_mnt="/tmpmnt_system-boot"
+        mkdir -p $tmpboot_mnt
+        mount -o ro "$boot_partition" "$tmpboot_mnt"
+        LD_PRELOAD=/lib/no-udev.so cryptsetup --type luks2 --key-file "$tmpboot_mnt/keyfile" --pbkdf-memory 100000 open /dev/sda4 ubuntu-data
+        umount "$tmpboot_mnt"
+        ln -s ../dm-0 /dev/mapper/ubuntu-data
+}
+
 #---------------------------------------------------------------------
 # XXX: Entry point - called by the initramfs "/init" script.
 #---------------------------------------------------------------------
@@ -207,8 +226,17 @@ mountroot()
 		snap_kernel=*)
 			snap_kernel="${x#*=}"
 			;;
+                snap_mode=*)
+			snap_mode="${x#*=}"
+			;;
 		esac
 	done
+
+        if [ "$snap_mode" = "install" ] || [ "$snap_mode" = "recover" ] || [ "$snap_mode" = "recover_reboot" ]; then
+            # FIXME: these should come from the kernel cmdline
+            snap_core="core20_x1.snap"
+            snap_kernel="pc-kernel_x1.snap"
+        fi
 
         # basic validation
         if [ -z "$snap_core" ]; then
@@ -218,17 +246,30 @@ mountroot()
             panic "the requried kernel commandline snap_kernel is not set"
         fi
 
-        # always ensure writable is in a good state
-        writable_label="writable"
-        writable_mnt="/tmpmnt_${writable_label}"
-	mkdir -p "$writable_mnt"
-        fsck_writable "$writable_label" "$writable_mnt"
+	# Request bootloader partition be mounted
+	boot_partition=$(findfs LABEL="ubuntu-boot" 2>/dev/null || :)
 
-        # mount the root fs
-        do_root_mounting
+        if [ "$snap_mode" != "install" ]; then
+            open_data_partition
+        fi
+
+        # always ensure writable is in a good state
+        writable_label="ubuntu-data"
+
+        if [ "$snap_mode" = "install" ] || [ "$snap_mode" = "recover" ] || [ "$snap_mode" = "recover_reboot" ]; then
+            writable_mnt="/writable"
+        else
+            writable_mnt="/tmpmnt_${writable_label}"
+	    mkdir -p "$writable_mnt"
+            fsck_writable "$writable_label" "$writable_mnt"
+
+            # mount the root fs
+            do_root_mounting
+        fi
+
         # mount core and kernel snaps
         mount_snaps
-        
+
         # mount /run
 	echo "initrd: mounting /run" >/dev/kmsg || true
 	mount -o rw,nosuid,noexec,relatime,mode=755 -t tmpfs tmpfs "${rootmnt}/run"
@@ -252,15 +293,17 @@ mountroot()
                 #        let systemd do a "remount,rw" for us. unfortunately
                 #        this is not supported by systemd so we need to do
                 #        the RW mount and fsck dance etc here :/
-                echo "LABEL=writable /writable auto defaults 0 0" >> "$fstab"
+                #echo "LABEL=writable /writable auto defaults 0 0" >> "$fstab"
 		handle_writable_paths "$writable_paths" "$fstab"
+
+                # ensure the right recover system is available
+                # (must be added *last*)
+                echo "/writable/system-data/var/lib/snapd/seed" "/var/lib/snapd/seed non bind 0 0" >> "$fstab"
+                echo "/writable/system-data/var/lib/snapd/seed/snaps" "/var/lib/snapd/seed/snaps non bind 0 0" >> "$fstab"
 	fi
 
         # IMPORTANT: ensure we synced everything back to disk
         sync
-
-	# Request bootloader partition be mounted
-	boot_partition=$(findfs LABEL="system-boot" 2>/dev/null || :)
 
 	if [ -n "$boot_partition" ]; then
 	        # determine bootloader type, we need to inspect the boot
@@ -268,7 +311,7 @@ mountroot()
 		grubdir="/boot/grub"
 		ubootdir="/boot/uboot"
 
-                tmpboot_mnt="/tmpmnt_system-boot"
+                tmpboot_mnt="/tmpmnt_ubuntu-boot"
                 mkdir -p $tmpboot_mnt
                 mount -o ro "$boot_partition" "$tmpboot_mnt"
 

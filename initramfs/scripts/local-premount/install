@@ -44,19 +44,58 @@ syspath="$(dirname "$(realpath /sys/class/block/"$(basename "$ubuntu_seed_part")
 device="$(realpath /dev/block/"$(cat "$syspath"/dev)")"
 
 
-create_writable_on_tmpfs() {
-    echo "Create writable"
+seed_grubenv_get() {
+    grub-editenv /ubuntu-seed/EFI/ubuntu/grubenv list|grep -w $1|cut -d= -f2
+}
+
+seed_grubenv_set() {
+    grub-editenv /ubuntu-seed/EFI/ubuntu/grubenv set $1
+}
+
+extract_kernel() {
+    local version="$1"
+    # FIXME: we must get the correct kernel snap from the recovery system
+    # possibly the best way would be to invoke the go binary to do that for us
+}
+
+create_writable_partition_on_tmpfs() {
+    echo "Create writable partition on tpmfs"
     mkdir /ubuntu-seed /writable /ubuntu-boot
     mount -t vfat "$ubuntu_seed_part" /ubuntu-seed
     mount -t vfat "$ubuntu_boot_part" /ubuntu-boot
     mount -t tmpfs tmpfs /writable
+}
+
+run_chooser() {
+    local output_file="/writable/$system_path/chooser.out"
+    mkdir -p /writable/"$system_path"
+    if [ "$snap_mode" = "install" ]; then
+        chooser -title "Select the recovery version to install:" -seed /ubuntu-seed -output "$output_file"
+    elif [ "$snap_mode" = "recover" ]; then
+        chooser -title "Select the recovery system version:" -seed /ubuntu-seed -output "$output_file"
+        local current_version=$(seed_grubenv_get snap_recovery_system)
+        . "$output_file"
+        if [ "$current_version" != "$uc_recovery_system" ]; then
+            # FIXME: also tell the bootloader to boot kernel-next for recovery if using current/next
+            #        to prevent open-value parameters in the kernel command line
+            seed_grubenv_set snap_recovery_system="$uc_recovery_system"
+            extract_kernel "$uc_recovery_system"
+            echo "Rebooting to use recovery version $uc_recovery_system"
+            sleep 2
+            sync
+            reboot
+        fi
+    fi
+}
+
+populate_writable_partition() {
     mkdir -p /writable/"$seed_path"
     mkdir -p /writable/"$snaps_path"
     mkdir -p /writable/system-data/boot
     echo "bind mount recovery"
     mount -o bind "$recovery_path" /writable/"$seed_path"
-    echo "bind mount snap direcotry"
-    mkdir /writable/"$seed_path"/snaps
+    echo "bind mount snap directory"
+    mkdir -p /writable/"$seed_path"/snaps
     mount -o bind "$recovery_root"/snaps /writable/"$seed_path"/snaps
     
     echo "create symlinks"
@@ -87,10 +126,13 @@ update_grub() {
 
 recovery_root="/ubuntu-seed/"
 recovery_path="$recovery_root/systems/$recovery"
-seed_path="/system-data/var/lib/snapd/seed"
-snaps_path="/system-data/var/lib/snapd/snaps"
+system_path="/system-data"
+seed_path="$system_path/var/lib/snapd/seed"
+snaps_path="$system_path/var/lib/snapd/snaps"
 
-create_writable_on_tmpfs
+create_writable_partition_on_tmpfs
+run_chooser
+populate_writable_partition
 update_grub
 
 sync

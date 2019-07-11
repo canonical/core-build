@@ -93,7 +93,5 @@ snaps_path="/system-data/var/lib/snapd/snaps"
 create_writable_on_tmpfs
 update_grub
 
-umount /writable
-
 sync
 

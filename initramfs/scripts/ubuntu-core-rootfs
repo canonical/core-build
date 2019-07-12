@@ -224,7 +224,7 @@ mountroot()
 		esac
 	done
 
-        if [ "$snap_mode" = "install" ] || [ "$snap_mode" = "recover" ] || [ "$snap_mode" = "recover_reboot" ]; then
+        if [ "$snap_mode" = "install" ] || [ "$snap_mode" = "recover" ]; then
             # FIXME: these should come from the kernel cmdline
             snap_core="core20_x1.snap"
             snap_kernel="pc-kernel_x1.snap"
@@ -248,7 +248,7 @@ mountroot()
         # always ensure writable is in a good state
         writable_label="ubuntu-data"
 
-        if [ "$snap_mode" = "install" ] || [ "$snap_mode" = "recover" ] || [ "$snap_mode" = "recover_reboot" ]; then
+        if [ "$snap_mode" = "install" ] || [ "$snap_mode" = "recover" ]; then
             writable_mnt="/writable"
         else
             writable_mnt="/tmpmnt_${writable_label}"

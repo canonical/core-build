@@ -32,7 +32,7 @@ done
 
 # Only prepare writable on tmpfs in these three modes
 
-if [ "$snap_mode" != "install" ] && [ "$snap_mode" != "recover" ] && [ "$snap_mode" != "recover_reboot" ]; then
+if [ "$snap_mode" != "install" ] && [ "$snap_mode" != "recover" ]; then
     exit 0
 fi
 

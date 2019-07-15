@@ -17,6 +17,7 @@ case "$1" in
 esac
 
 
+# shellcheck disable=SC2013
 for x in $(cat /proc/cmdline); do
     case $x in
         snap_mode=*)
@@ -40,22 +41,23 @@ fi
 ubuntu_seed_part="$(findfs LABEL=ubuntu-seed || true)"
 ubuntu_boot_part="$(findfs LABEL=ubuntu-boot || true)"
 
-syspath="$(dirname "$(realpath /sys/class/block/"$(basename "$ubuntu_seed_part")")")"
-device="$(realpath /dev/block/"$(cat "$syspath"/dev)")"
+#syspath="$(dirname "$(realpath /sys/class/block/"$(basename "$ubuntu_seed_part")")")"
+#device="$(realpath /dev/block/"$(cat "$syspath"/dev)")"
 
 
 seed_grubenv_get() {
-    grub-editenv /ubuntu-seed/EFI/ubuntu/grubenv list|grep -w $1|cut -d= -f2
+    grub-editenv /ubuntu-seed/EFI/ubuntu/grubenv list|grep -w "$1"|cut -d= -f2
 }
 
 seed_grubenv_set() {
-    grub-editenv /ubuntu-seed/EFI/ubuntu/grubenv set $1
+    grub-editenv /ubuntu-seed/EFI/ubuntu/grubenv set "$1"
 }
 
 extract_kernel() {
-    local version="$1"
+    version="$1"
     # FIXME: we must get the correct kernel snap from the recovery system
     # possibly the best way would be to invoke the go binary to do that for us
+    echo "TODO: extract kernel $version"
 }
 
 create_writable_partition_on_tmpfs() {
@@ -67,14 +69,16 @@ create_writable_partition_on_tmpfs() {
 }
 
 run_chooser() {
-    local output_file="/writable/$system_path/chooser.out"
+    output_file="/writable/$system_path/chooser.out"
     mkdir -p /writable/"$system_path"
     if [ "$snap_mode" = "install" ]; then
         chooser -title "Select the recovery version to install:" -seed /ubuntu-seed -output "$output_file"
     elif [ "$snap_mode" = "recover" ]; then
         chooser -title "Select the recovery system version:" -seed /ubuntu-seed -output "$output_file"
-        local current_version=$(seed_grubenv_get snap_recovery_system)
+        current_version="$(seed_grubenv_get snap_recovery_system)"
+        # shellcheck disable=SC1090
         . "$output_file"
+        # shellcheck disable=SC2154
         if [ "$current_version" != "$uc_recovery_system" ]; then
             # FIXME: also tell the bootloader to boot kernel-next for recovery if using current/next
             #        to prevent open-value parameters in the kernel command line
@@ -99,10 +103,10 @@ populate_writable_partition() {
     mount -o bind "$recovery_root"/snaps /writable/"$seed_path"/snaps
     
     echo "create symlinks"
-    snap_core=$(basename $(echo "$recovery_root"/snaps/core20_*.snap|tail -1))
+    snap_core=$(basename "$(echo "$recovery_root"/snaps/core20_*.snap|tail -1)")
     # fugly - hardcoded kernel name :( we need this so that the grub-bootenv
     # kernel name matches the kernel that is later seeded
-    snap_kernel=$(basename $(echo "$recovery_root"/snaps/pc-kernel_*.snap|tail -1))
+    snap_kernel=$(basename "$(echo "$recovery_root"/snaps/pc-kernel_*.snap|tail -1)")
     ln -s ../seed/snaps/"$snap_core" /writable/"$snaps_path"
     ln -s ../seed/snaps/"$snap_kernel" /writable/"$snaps_path"
     echo "done"
@@ -111,8 +115,8 @@ populate_writable_partition() {
 update_grub() {
     echo "Update grub"
     system_boot_grubenv="/ubuntu-boot/EFI/ubuntu/grubenv"
-    sys_recover_grubenv="/ubuntu-seed/EFI/ubuntu/grubenv"
-    mkdir -p $(dirname "$system_boot_grubenv")
+    #sys_recover_grubenv="/ubuntu-seed/EFI/ubuntu/grubenv"
+    mkdir -p "$(dirname "$system_boot_grubenv")"
 
     # snapd needs this (will be bind-mounted on /boot/grub later)
     grub-editenv "$system_boot_grubenv" create

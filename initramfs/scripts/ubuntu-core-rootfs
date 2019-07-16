@@ -212,10 +212,10 @@ mountroot()
 
         # basic validation
         if [ -z "$snap_core" ]; then
-            panic "the requried kernel commandline snap_core is not set"
+            panic "the required kernel commandline snap_core is not set"
         fi
         if [ -z "$snap_kernel" ]; then
-            panic "the requried kernel commandline snap_kernel is not set"
+            panic "the required kernel commandline snap_kernel is not set"
         fi
 
         # always ensure writable is in a good state

@@ -192,7 +192,7 @@ open_data_partition()
         tmpboot_mnt="/tmpmnt_system-boot"
         mkdir -p $tmpboot_mnt
         mount -o ro "$boot_partition" "$tmpboot_mnt"
-        LD_PRELOAD=/lib/no-udev.so cryptsetup open --type luks2 --master-key-file "$tmpboot_mnt/keyfile" /dev/sda4 ubuntu-data
+        unlock --key-path "$tmpboot_mnt/keyfile" /dev/sda4 ubuntu-data
         umount "$tmpboot_mnt"
 }
 

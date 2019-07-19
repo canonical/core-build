@@ -15,14 +15,6 @@ get_partition_from_label()
 
 	[ -n "$label" ] || panic "need FS label"
 
-	# FIXME: we're handling only the encrypted data case.
-	# The device node is predictable if ubuntu-data is encrypted. Also
-	# wait-for-root fails in this case, so use a shortcut here.
-	if [ "$label" = "ubuntu-data" ]; then
-		echo "/dev/mapper/ubuntu-data"
-		return
-	fi
-
 	# Make sure the device has been created by udev before looking for it
 	# Don't need to panic, since the output will be validated outside this function
 	wait-for-root "LABEL=$label" "${ROOTDELAY:-180}" >/dev/null || true
@@ -39,7 +31,7 @@ do_root_mounting()
 	root="LABEL=$writable_label"
 
 	# Make sure the device has been created by udev before we try to mount
-	#wait-for-root "$root" "${ROOTDELAY:-180}" || panic "unable to find root partition '$root'"
+	wait-for-root "$root" "${ROOTDELAY:-180}" || panic "unable to find root partition '$root'"
 
 	# FIXME: This is never false since we set $root above
 	[ -n "$root" ] || panic "no root partition specified"

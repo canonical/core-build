@@ -250,6 +250,10 @@ mountroot()
         if [ "$snap_mode" = "install" ] || [ "$snap_mode" = "recover" ]; then
             writable_mnt="/writable"
         else
+            # FIXME: we need this to create /dev/disk/by-label/ubuntu-data used by wait-for-root
+            udevadm control --property DM_UDEV_PRIMARY_SOURCE_FLAG=1
+            udevadm trigger /dev/dm-0
+
             writable_mnt="/tmpmnt_${writable_label}"
 	    mkdir -p "$writable_mnt"
             fsck_writable "$writable_label" "$writable_mnt"

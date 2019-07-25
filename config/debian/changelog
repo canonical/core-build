@@ -1,3 +1,10 @@
+ubuntu-core-config (0.6.40+ppa50) UNRELEASED; urgency=medium
+
+  * remove static files in etc,lib,usr,var - they come from the
+    core snap build now to be closer to how core18 is build
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 25 Jul 2019 10:20:29 +0200
+
 ubuntu-core-config (0.6.40+ppa49) xenial; urgency=medium
 
   * Stop marking /snap "transitional", this will create the core

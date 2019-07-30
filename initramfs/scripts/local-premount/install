@@ -34,6 +34,9 @@ done
 # Only prepare writable on tmpfs in these three modes
 
 if [ "$snap_mode" != "install" ] && [ "$snap_mode" != "recover" ]; then
+    # run mode
+    # TODO: add recovery handling
+    chooser -seed /ubuntu-seed -output "$output_file" -check
     exit 0
 fi
 

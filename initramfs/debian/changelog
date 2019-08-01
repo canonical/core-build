@@ -1,3 +1,21 @@
+initramfs-tools-ubuntu-core (0.7.45+ppa4) bionic; urgency=medium
+
+  [ Claudio Matsuoka ]
+  * ubuntu-core-rootfs: fix typo in error message
+
+  [ Zygmunt Krynicki ]
+  * tests: fix RuntimeWarning coroutine was never awaited
+
+  [ Michael Vogt ]
+  * initramfs: remove dead code
+
+  [ Dimitri John Ledkov ]
+  * Embed Full license
+  * Ensure that ucodes are included for all CPUs, dispite MODULES=list
+    setting.
+
+ -- Dimitri John Ledkov <xnox@ubuntu.com>  Thu, 01 Aug 2019 09:37:45 -0400
+
 initramfs-tools-ubuntu-core (0.7.45+ppa3) bionic; urgency=medium
 
   * Fix bionic shellcheck issues

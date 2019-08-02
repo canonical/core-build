@@ -31,23 +31,6 @@ for x in $(cat /proc/cmdline); do
 done
 
 
-# Only prepare writable on tmpfs in these three modes
-
-if [ "$snap_mode" != "install" ] && [ "$snap_mode" != "recover" ]; then
-    # run mode
-    # TODO: add recovery handling
-    chooser -seed /ubuntu-seed -output "$output_file" -check
-    exit 0
-fi
-
-
-ubuntu_seed_part="$(findfs LABEL=ubuntu-seed || true)"
-ubuntu_boot_part="$(findfs LABEL=ubuntu-boot || true)"
-
-#syspath="$(dirname "$(realpath /sys/class/block/"$(basename "$ubuntu_seed_part")")")"
-#device="$(realpath /dev/block/"$(cat "$syspath"/dev)")"
-
-
 seed_grubenv_get() {
     grub-editenv /ubuntu-seed/EFI/ubuntu/grubenv list|grep -w "$1"|cut -d= -f2
 }
@@ -55,6 +38,53 @@ seed_grubenv_get() {
 seed_grubenv_set() {
     grub-editenv /ubuntu-seed/EFI/ubuntu/grubenv set "$1"
 }
+
+ubuntu_seed_part="$(findfs LABEL=ubuntu-seed || true)"
+ubuntu_boot_part="$(findfs LABEL=ubuntu-boot || true)"
+recovery_root="/ubuntu-seed/"
+recovery_path="$recovery_root/systems/$recovery"
+system_path="/system-data"
+seed_path="$system_path/var/lib/snapd/seed"
+snaps_path="$system_path/var/lib/snapd/snaps"
+chooser_output_file="/chooser.out"
+
+
+check_recover_trigger() {
+    mkdir /ubuntu-seed /ubuntu-boot
+    mount -t vfat "$ubuntu_seed_part" /ubuntu-seed
+    mount -t vfat "$ubuntu_boot_part" /ubuntu-boot
+
+    if [ -z "$snap_mode" ]; then
+        # run mode
+        echo Press SHIFT to enter recover mode
+        sleep 2
+        if /bin/check-trigger; then
+            chooser -title "Select the recovery system version:" -seed /ubuntu-seed -output "$chooser_output_file"
+            touch /.recover
+            snap_mode="recover"
+            current_version="$(seed_grubenv_get snap_recovery_system)"
+            # shellcheck disable=SC1090
+            . "$chooser_output_file"
+            # shellcheck disable=SC2154
+            if [ "$current_version" != "$uc_recovery_system" ]; then
+                # FIXME: also tell the bootloader to boot kernel-next for recovery if using current/next
+                #        to prevent open-value parameters in the kernel command line
+                seed_grubenv_set snap_recovery_system="$uc_recovery_system"
+                seed_grubenv_set snap_mode="recover"
+                extract_kernel "$uc_recovery_system"
+                echo "Rebooting to use recovery version $uc_recovery_system"
+                sleep 2
+                sync
+                reboot
+            fi
+        fi
+    fi
+}
+
+
+#syspath="$(dirname "$(realpath /sys/class/block/"$(basename "$ubuntu_seed_part")")")"
+#device="$(realpath /dev/block/"$(cat "$syspath"/dev)")"
+
 
 extract_kernel() {
     version="$1"
@@ -65,33 +95,13 @@ extract_kernel() {
 
 create_writable_partition_on_tmpfs() {
     echo "Create writable partition on tpmfs"
-    mkdir /ubuntu-seed /writable /ubuntu-boot
-    mount -t vfat "$ubuntu_seed_part" /ubuntu-seed
-    mount -t vfat "$ubuntu_boot_part" /ubuntu-boot
+    mkdir /writable
     mount -t tmpfs tmpfs /writable
 }
 
 run_chooser() {
-    output_file="/writable/$system_path/chooser.out"
-    mkdir -p /writable/"$system_path"
     if [ "$snap_mode" = "install" ]; then
-        chooser -title "Select the recovery version to install:" -seed /ubuntu-seed -output "$output_file"
-    elif [ "$snap_mode" = "recover" ]; then
-        chooser -title "Select the recovery system version:" -seed /ubuntu-seed -output "$output_file"
-        current_version="$(seed_grubenv_get snap_recovery_system)"
-        # shellcheck disable=SC1090
-        . "$output_file"
-        # shellcheck disable=SC2154
-        if [ "$current_version" != "$uc_recovery_system" ]; then
-            # FIXME: also tell the bootloader to boot kernel-next for recovery if using current/next
-            #        to prevent open-value parameters in the kernel command line
-            seed_grubenv_set snap_recovery_system="$uc_recovery_system"
-            extract_kernel "$uc_recovery_system"
-            echo "Rebooting to use recovery version $uc_recovery_system"
-            sleep 2
-            sync
-            reboot
-        fi
+        chooser -title "Select the recovery version to install:" -seed /ubuntu-seed -output "$chooser_output_file"
     fi
 }
 
@@ -130,12 +140,14 @@ update_grub() {
     umount /ubuntu-boot
 }
 
+check_recover_trigger
 
-recovery_root="/ubuntu-seed/"
-recovery_path="$recovery_root/systems/$recovery"
-system_path="/system-data"
-seed_path="$system_path/var/lib/snapd/seed"
-snaps_path="$system_path/var/lib/snapd/snaps"
+# Only prepare writable on tmpfs in these modes
+if [ "$snap_mode" != "install" ] && [ "$snap_mode" != "recover" ]; then
+    umount /ubuntu-seed
+    umount /ubuntu-boot
+    exit
+fi
 
 create_writable_partition_on_tmpfs
 run_chooser

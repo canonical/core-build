@@ -7,6 +7,7 @@
 
 . /scripts/ubuntu-core-functions
 
+
 sync_dirs()
 {
 	base="$1"
@@ -223,6 +224,10 @@ mountroot()
 		esac
 	done
 
+        if [ -f /.recover ]; then
+            snap_mode=recover
+        fi
+
         if [ "$snap_mode" = "install" ] || [ "$snap_mode" = "recover" ]; then
             # FIXME: these should come from the kernel cmdline
             snap_core="core20_x1.snap"
@@ -367,6 +372,10 @@ mountroot()
 			chown -R "$dstown" "$user/"
 		fi
 	done
+
+        # Propagate the recover marker
+        [ -f /.recover] && mv /.recover "${rootmnt}/writable/system-data/"
+        [ -f /chooser.out ] && mv /chooser.out "${rootmnt}/writable/system-data/"
 
 	[ "$quiet" != "y" ] && log_begin_msg "Running /scripts/local-bottom"
 	run_scripts /scripts/local-bottom

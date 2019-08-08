@@ -23,10 +23,6 @@ for x in $(cat /proc/cmdline); do
         snap_mode=*)
             snap_mode=${x#*=}
             ;;
-        snap_recovery_system=*)
-            recovery=${x#*=}
-            echo "System recovery set to $recovery"
-            ;;
     esac
 done
 
@@ -41,6 +37,13 @@ seed_grubenv_set() {
 
 ubuntu_seed_part="$(findfs LABEL=ubuntu-seed || true)"
 ubuntu_boot_part="$(findfs LABEL=ubuntu-boot || true)"
+
+mkdir /ubuntu-seed /ubuntu-boot
+mount -t vfat "$ubuntu_seed_part" /ubuntu-seed
+mount -t vfat "$ubuntu_boot_part" /ubuntu-boot
+recovery=$(seed_grubenv_get "snap_recovery_system")
+echo "System recovery set to $recovery"
+
 recovery_root="/ubuntu-seed/"
 recovery_path="$recovery_root/systems/$recovery"
 system_path="/system-data"
@@ -50,9 +53,6 @@ chooser_output_file="/chooser.out"
 
 
 check_recover_trigger() {
-    mkdir /ubuntu-seed /ubuntu-boot
-    mount -t vfat "$ubuntu_seed_part" /ubuntu-seed
-    mount -t vfat "$ubuntu_boot_part" /ubuntu-boot
 
     if [ -z "$snap_mode" ]; then
         # run mode
@@ -135,17 +135,12 @@ update_grub() {
     grub-editenv "$system_boot_grubenv" create
     grub-editenv "$system_boot_grubenv" set snap_core="core20_x1.snap"
     grub-editenv "$system_boot_grubenv" set snap_kernel="pc-kernel_x1.snap"
-
-    umount /ubuntu-seed
-    umount /ubuntu-boot
 }
 
 check_recover_trigger
 
 # Only prepare writable on tmpfs in these modes
 if [ "$snap_mode" != "install" ] && [ "$snap_mode" != "recover" ]; then
-    umount /ubuntu-seed
-    umount /ubuntu-boot
     exit
 fi
 

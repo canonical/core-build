@@ -8,6 +8,10 @@
 . /scripts/ubuntu-core-functions
 
 
+seed_grubenv_get() {
+    grub-editenv /ubuntu-seed/EFI/ubuntu/grubenv list|grep -w "$1"|cut -d= -f2
+}
+
 sync_dirs()
 {
 	base="$1"
@@ -211,13 +215,6 @@ mountroot()
         # find what snappy-os version to use
         for x in $(cat /proc/cmdline); do
 	    case "${x}" in
-                # new kernel/os snap vars
-		snap_core=*)
-			snap_core="${x#*=}"
-			;;
-		snap_kernel=*)
-			snap_kernel="${x#*=}"
-			;;
                 snap_mode=*)
 			snap_mode="${x#*=}"
 			;;
@@ -228,18 +225,31 @@ mountroot()
             snap_mode=recover
         fi
 
+        snap_core=$(seed_grubenv_get "snap_core")
+        snap_kernel=$(seed_grubenv_get "snap_kernel")
+
+        echo =============================
+        echo cmdline: $(cat /proc/cmdline)
+        echo snap_mode: $snap_mode
+        echo snap_core: $snap_core
+        echo snap_kernel: $snap_kernel
+        echo =============================
+
+        umount /ubuntu-seed
+        umount /ubuntu-boot
+
         if [ "$snap_mode" = "install" ] || [ "$snap_mode" = "recover" ]; then
-            # FIXME: these should come from the kernel cmdline
+            # FIXME: these should come from grubenv
             snap_core="core20_x1.snap"
             snap_kernel="pc-kernel_x1.snap"
         fi
 
         # basic validation
         if [ -z "$snap_core" ]; then
-            panic "the requried kernel commandline snap_core is not set"
+            panic "the required grubenv variable snap_core is not set"
         fi
         if [ -z "$snap_kernel" ]; then
-            panic "the requried kernel commandline snap_kernel is not set"
+            panic "the required grubenv variable snap_kernel is not set"
         fi
 
 	# Request bootloader partition be mounted

@@ -215,14 +215,14 @@ mountroot()
         # find what snappy-os version to use
         for x in $(cat /proc/cmdline); do
 	    case "${x}" in
-                snap_mode=*)
-			snap_mode="${x#*=}"
+                snap_recovery_mode=*)
+			snap_recovery_mode="${x#*=}"
 			;;
 		esac
 	done
 
         if [ -f /.recover ]; then
-            snap_mode=recover
+            snap_recovery_mode=recover
         fi
 
         snap_core=$(seed_grubenv_get "snap_core")
@@ -230,16 +230,14 @@ mountroot()
 
         echo =============================
         echo cmdline: $(cat /proc/cmdline)
-        echo snap_mode: $snap_mode
-        echo snap_core: $snap_core
-        echo snap_kernel: $snap_kernel
+        grub-editenv /ubuntu-seed/EFI/ubuntu/grubenv list
         echo =============================
 
         umount /ubuntu-seed
         umount /ubuntu-boot
 
-        if [ "$snap_mode" = "install" ] || [ "$snap_mode" = "recover" ]; then
-            # FIXME: these should come from grubenv
+        if [ "$snap_recovery_mode" = "install" ] || [ "$snap_recovery_mode" = "recover" ]; then
+            # FIXME: these should come from grubenv or inferred from snap_recovery_system
             snap_core="core20_x1.snap"
             snap_kernel="pc-kernel_x1.snap"
         fi
@@ -255,14 +253,14 @@ mountroot()
 	# Request bootloader partition be mounted
 	boot_partition=$(findfs LABEL="ubuntu-boot" 2>/dev/null || :)
 
-        if [ "$snap_mode" != "install" ]; then
+        if [ "$snap_recovery_mode" != "install" ]; then
             open_data_partition
         fi
 
         # always ensure writable is in a good state
         writable_label="ubuntu-data"
 
-        if [ "$snap_mode" = "install" ] || [ "$snap_mode" = "recover" ]; then
+        if [ "$snap_recovery_mode" = "install" ] || [ "$snap_recovery_mode" = "recover" ]; then
             writable_mnt="/writable"
         else
             # FIXME: we need this to create /dev/disk/by-label/ubuntu-data used by wait-for-root
@@ -354,7 +352,7 @@ mountroot()
                 androiddir="writable/androidboot"
                 mkdir -p "${rootmnt}/${androiddir}"
                 if [ ! -e "${rootmnt}/${androiddir}/androidboot.env" ]; then
-                        echo -e "snap_mode=\nsnap_core=$snap_core\nsnap_kernel=$snap_kernel\nsnap_try_core=\nsnap_try_kernel=" > \
+                        echo -e "snap_recovery_mode=\nsnap_core=$snap_core\nsnap_kernel=$snap_kernel\nsnap_try_core=\nsnap_try_kernel=" > \
                              "${rootmnt}/${androiddir}/androidboot.env"
                 fi
                 mount -o bind "${rootmnt}/${androiddir}" "${rootmnt}/boot/androidboot"
@@ -384,7 +382,7 @@ mountroot()
 	done
 
         # Propagate the recover marker
-        [ -f /.recover] && mv /.recover "${rootmnt}/writable/system-data/"
+        [ -f /.recover ] && mv /.recover "${rootmnt}/writable/system-data/"
         [ -f /chooser.out ] && mv /chooser.out "${rootmnt}/writable/system-data/"
 
 	[ "$quiet" != "y" ] && log_begin_msg "Running /scripts/local-bottom"

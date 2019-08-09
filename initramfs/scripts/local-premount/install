@@ -20,8 +20,8 @@ esac
 # shellcheck disable=SC2013
 for x in $(cat /proc/cmdline); do
     case $x in
-        snap_mode=*)
-            snap_mode=${x#*=}
+        snap_recovery_mode=*)
+            snap_recovery_mode=${x#*=}
             ;;
     esac
 done
@@ -54,14 +54,14 @@ chooser_output_file="/chooser.out"
 
 check_recover_trigger() {
 
-    if [ -z "$snap_mode" ]; then
+    if [ -z "$snap_recovery_mode" ]; then
         # run mode
         echo Press SHIFT to enter recover mode
         sleep 2
         if /bin/check-trigger; then
             chooser -title "Select the recovery system version:" -seed /ubuntu-seed -output "$chooser_output_file"
             touch /.recover
-            snap_mode="recover"
+            snap_recovery_mode="recover"
             current_version="$(seed_grubenv_get snap_recovery_system)"
             # shellcheck disable=SC1090
             . "$chooser_output_file"
@@ -70,7 +70,7 @@ check_recover_trigger() {
                 # FIXME: also tell the bootloader to boot kernel-next for recovery if using current/next
                 #        to prevent open-value parameters in the kernel command line
                 seed_grubenv_set snap_recovery_system="$uc_recovery_system"
-                seed_grubenv_set snap_mode="recover"
+                seed_grubenv_set snap_recovery_mode="recover"
                 extract_kernel "$uc_recovery_system"
                 echo "Rebooting to use recovery version $uc_recovery_system"
                 sleep 2
@@ -100,7 +100,7 @@ create_writable_partition_on_tmpfs() {
 }
 
 run_chooser() {
-    if [ "$snap_mode" = "install" ]; then
+    if [ "$snap_recovery_mode" = "install" ]; then
         chooser -title "Select the recovery version to install:" -seed /ubuntu-seed -output "$chooser_output_file"
     fi
 }
@@ -140,7 +140,7 @@ update_grub() {
 check_recover_trigger
 
 # Only prepare writable on tmpfs in these modes
-if [ "$snap_mode" != "install" ] && [ "$snap_mode" != "recover" ]; then
+if [ "$snap_recovery_mode" != "install" ] && [ "$snap_recovery_mode" != "recover" ]; then
     exit
 fi
 

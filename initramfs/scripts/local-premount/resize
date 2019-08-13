@@ -17,9 +17,9 @@ case "$1" in
 esac
 
 # Don't run in install mode
-grep -wq "snap_mode=install" /proc/cmdline && exit 0
+grep -wq "snap_recovery_mode=install" /proc/cmdline && exit 0
 
-# FIXME: temporarily disable writable resize
+# FIXME: disable writable resize, create the partition with right size on install
 echo "not resizing"
 sleep 2
 exit 0

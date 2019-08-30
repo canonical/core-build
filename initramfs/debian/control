@@ -4,14 +4,13 @@ Priority: optional
 Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
 Build-Depends: debhelper (>= 9), debootstrap, lsb-release, fakeroot, fakechroot, shellcheck
 Standards-Version: 3.9.5
-Vcs-Git: Vcs-Git: https://github.com/snapcore/core-build
+Vcs-Bzr: lp:ubuntu/initramfs-tools-ubuntu-core
 
 Package: initramfs-tools-ubuntu-core
-Architecture: all
-Depends: initramfs-tools, ubuntu-core-config, ${misc:Depends},
-  parted, gdisk, abootimg
+Architecture: any
+Depends: initramfs-tools, initramfs-tools-devices, ubuntu-core-config, ${misc:Depends}, parted, gdisk, intel-microcode [amd64 i386], amd64-microcode [amd64 i386]
 Description: Tools for making a read-only Ubuntu Core image selectively writeable
  This package contains the scripts to make a read-only Ubuntu Core image
  selectively writeable. These scripts are run within the initramfs.
  This package should be installed on Ubuntu Core systems.
-XB-Task: ubuntu-core
+

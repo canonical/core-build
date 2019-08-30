@@ -1,3 +1,9 @@
+initramfs-tools-ubuntu-core (0.7.49) UNRELEASED; urgency=medium
+
+  * Revent a few bogus changes from the archive.
+
+ -- Dimitri John Ledkov <xnox@ubuntu.com>  Fri, 30 Aug 2019 14:47:41 +0100
+
 initramfs-tools-ubuntu-core (0.7.48) eoan; urgency=medium
 
   * Merge/import changes up to 0.7.45+ppa4 from snappy-dev/image

@@ -197,7 +197,7 @@ open_data_partition()
         tmpboot_mnt="/tmpmnt_system-boot"
         mkdir -p $tmpboot_mnt
         mount -o ro "$boot_partition" "$tmpboot_mnt"
-        unlock --key-path "$tmpboot_mnt/keyfile" /dev/sda4 ubuntu-data
+        unlock --key-file "$tmpboot_mnt/keyfile" /dev/sda4 ubuntu-data
         umount "$tmpboot_mnt"
 }
 

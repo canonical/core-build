@@ -296,15 +296,6 @@ mountroot()
 
                 # let systemd do the actual mounting
                 umount "$tmpboot_mnt"
-        elif abootimg -i "$(findfs PARTLABEL=recovery)" >/dev/null 2>&1; then
-                echo "android style bootloader detected" >/dev/kmsg || true
-                androiddir="writable/androidboot"
-                mkdir -p "${rootmnt}/${androiddir}"
-                if [ ! -e "${rootmnt}/${androiddir}/androidboot.env" ]; then
-                        echo -e "snap_mode=\nsnap_core=$snap_core\nsnap_kernel=$snap_kernel\nsnap_try_core=\nsnap_try_kernel=" > \
-                             "${rootmnt}/${androiddir}/androidboot.env"
-                fi
-                mount -o bind "${rootmnt}/${androiddir}" "${rootmnt}/boot/androidboot"
 	fi
 
 	# Mount the systemd overlay so that we have a complete root partition during boot

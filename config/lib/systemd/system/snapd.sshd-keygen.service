@@ -1,8 +1,0 @@
-[Unit]
-Description=Generate sshd host keys
-Before=sshd.service
-
-[Service]
-Type=oneshot
-RemainAfterExit=yes
-ExecStart=/usr/lib/snapd/sshd-host-keygen

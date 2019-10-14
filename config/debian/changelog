@@ -1,3 +1,13 @@
+ubuntu-core-config (0.6.40+ppa50) xenial; urgency=medium
+
+  * drop static files from the debian package, those are put in place
+    by https://github.com/snapcore/core/pull/83 now
+  * the package is still needed (for now) to:
+    - to run "pam-auth-update --package snappy-extrausers"
+    - set some permissions in the postinst
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Mon, 14 Oct 2019 07:35:58 +0200
+
 ubuntu-core-config (0.6.40+ppa49) xenial; urgency=medium
 
   * Stop marking /snap "transitional", this will create the core

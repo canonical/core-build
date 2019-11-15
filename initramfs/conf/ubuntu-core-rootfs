@@ -1,5 +1,6 @@
 BOOT=ubuntu-core-rootfs
 MODULES=list
+init=/lib/systemd/systemd
 set -a
 IUCODE_TOOL_INITRAMFS=early
 IUCODE_TOOL_SCANCPUS=no

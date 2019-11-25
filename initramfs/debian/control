@@ -9,7 +9,7 @@ Vcs-Git: https://github.com/snapcore/core-build
 Package: initramfs-tools-ubuntu-core
 Architecture: any
 Depends: initramfs-tools, initramfs-tools-devices, ubuntu-core-config, ${misc:Depends}, parted, gdisk, intel-microcode [amd64 i386], amd64-microcode [amd64 i386]
-Recommends: ubuntu-core-initramfs
+Recommends: ubuntu-core-initramfs [amd64]
 Description: Tools for making a read-only Ubuntu Core image selectively writeable
  This package contains the scripts to make a read-only Ubuntu Core image
  selectively writeable. These scripts are run within the initramfs.

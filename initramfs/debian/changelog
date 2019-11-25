@@ -1,7 +1,7 @@
-initramfs-tools-ubuntu-core (0.7.50+ppa1) focal; urgency=medium
+initramfs-tools-ubuntu-core (0.7.50+ppa2) focal; urgency=medium
 
   * Add ubuntu-core-initramfs recommends, which currently simply generates
-    kernel.efi.
+    kernel.efi on amd64 only.
 
  -- Dimitri John Ledkov <xnox@ubuntu.com>  Tue, 19 Nov 2019 12:47:27 +0000
 

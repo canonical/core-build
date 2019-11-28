@@ -1,3 +1,9 @@
+initramfs-tools-ubuntu-core (0.7.50+ppa3) UNRELEASED; urgency=medium
+
+  * Add ubuntu-core-initramfs recommends on arm64 and armhf.
+
+ -- Dimitri John Ledkov <xnox@ubuntu.com>  Thu, 28 Nov 2019 06:54:29 +0000
+
 initramfs-tools-ubuntu-core (0.7.50+ppa2) focal; urgency=medium
 
   * Add ubuntu-core-initramfs recommends, which currently simply generates

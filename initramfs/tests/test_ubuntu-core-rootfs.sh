@@ -1,7 +1,8 @@
 #!/bin/sh -e
 
+# shellcheck disable=SC2034
 scriptsroot=./scripts
-# shellcheck source=./scripts/ubuntu-core-rootfs
+# shellcheck disable=SC1091
 . scripts/ubuntu-core-rootfs
 
 

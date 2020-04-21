@@ -6,7 +6,7 @@ check:
 	@set -e; for f in $(TESTFILES); do \
 	    echo "Checking shell syntax of $$f"; \
 	    sh -n $$f; \
-            shellcheck -x $$f; \
+            shellcheck $$f; \
 	done
 
 	@set -e; for f in tests/*.sh; do \

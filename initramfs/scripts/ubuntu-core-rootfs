@@ -5,7 +5,8 @@
 # Entry point: mountroot().
 #---------------------------------------------------------------------
 
-. /scripts/ubuntu-core-functions
+# shellcheck disable=SC2034
+. ${scriptsroot:-/scripts}/ubuntu-core-functions
 
 sync_dirs()
 {
@@ -147,7 +148,13 @@ handle_writable_defaults()
         fi
 
         dstpath="${rootmnt}/writable/system-data"
-        cp -a "$srcpath/*" "$dstpath"
+        for fileordir in "$srcpath"/* ; do
+            # skip empty $srcpath/
+            [ ! -e "$fileordir" ] && continue
+
+            # copy
+            cp -a $fileordir "$dstpath"
+        done
         touch "$srcpath/.done"
 }
 

@@ -5,7 +5,8 @@
 # Entry point: mountroot().
 #---------------------------------------------------------------------
 
-. /scripts/ubuntu-core-functions
+# shellcheck disable=SC2034
+. ${scriptsroot:-/scripts}/ubuntu-core-functions
 
 sync_dirs()
 {
@@ -132,6 +133,29 @@ handle_writable_paths()
 			continue
 		fi
 	done
+
+        # now apply the defaults on top
+        handle_writable_defaults
+}
+
+# handle_writable_default will apply system defaults *once* after
+# the handle_writable_path got populated
+handle_writable_defaults()
+{
+        srcpath="${rootmnt}/writable/system-data/_writable_defaults"
+        if [ ! -d "$srcpath" ] || [ -e "${srcpath}/.done" ]; then
+                return
+        fi
+
+        dstpath="${rootmnt}/writable/system-data"
+        for fileordir in "$srcpath"/* ; do
+            # skip empty $srcpath/
+            [ ! -e "$fileordir" ] && [ ! -L "$fileordir" ] &&  continue
+
+            # copy
+            cp -a "$fileordir" "$dstpath"
+        done
+        touch "$srcpath/.done"
 }
 
 fsck_writable()

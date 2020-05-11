@@ -9,3 +9,7 @@ check:
             shellcheck $$f; \
 	done
 
+	@set -e; for f in tests/*.sh; do \
+		echo "Running tests $$f"; \
+		sh -e $$f; \
+	done;

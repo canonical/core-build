@@ -1,3 +1,9 @@
+initramfs-tools-ubuntu-core (0.7.45+ppa5) bionic; urgency=medium
+
+  * initramfs: add new handle_writable_defaults()
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Mon, 11 May 2020 15:40:55 +0200
+
 initramfs-tools-ubuntu-core (0.7.45+ppa4) bionic; urgency=medium
 
   [ Claudio Matsuoka ]

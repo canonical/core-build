@@ -158,6 +158,19 @@ handle_writable_defaults()
         touch "$srcpath/.done"
 }
 
+# Mount the seed directory via fstab
+handle_recovery_paths()
+{
+	fstab="$1"
+	[ -n "$fstab" ] || panic "need fstab"
+	
+	seed_dir="/var/lib/snapd/seed"
+	recovery_partition=$(findfs LABEL="system-recovery" 2>/dev/null)
+	if [ -n "$recovery_partition" ]; then
+		echo "/writable/system-data$seed_dir $seed_dir none bind 0 0" >> "$fstab"
+	fi
+}
+
 fsck_writable()
 {
 	local writable_label="$1"
@@ -250,9 +263,13 @@ mountroot()
 
         # mount the root fs
         do_root_mounting
+
+	# mount the recovery partition
+	mount_recovery
+
         # mount core and kernel snaps
         mount_snaps
-        
+
         # mount /run
 	echo "initrd: mounting /run" >/dev/kmsg || true
 	mount -o rw,nosuid,noexec,relatime,mode=755 -t tmpfs tmpfs "${rootmnt}/run"
@@ -278,6 +295,7 @@ mountroot()
                 #        the RW mount and fsck dance etc here :/
                 echo "LABEL=writable /writable auto defaults 0 0" >> "$fstab"
 		handle_writable_paths "$writable_paths" "$fstab"
+		handle_recovery_paths "$fstab"
 	fi
 
         # IMPORTANT: ensure we synced everything back to disk

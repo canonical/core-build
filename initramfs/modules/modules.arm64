@@ -1,2 +1,14 @@
-usb-storage
+dw_mmc
+dw_mmc-pltfm
+dw_mmc-rockchip
+fixed
+i2c-rk3x
 nls_iso8859-1
+phy-rockchip-emmc
+rk808
+rk808-regulator
+rockchip-io-domain
+sdhci
+sdhci-of-arasan
+sdhci-pltfm
+usb-storage
